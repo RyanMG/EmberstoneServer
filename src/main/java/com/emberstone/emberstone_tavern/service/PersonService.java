@@ -3,6 +3,7 @@ package com.emberstone.emberstone_tavern.service;
 import com.emberstone.emberstone_tavern.controllers.AuthController;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
+import com.emberstone.emberstone_tavern.model.UserModel;
 import com.emberstone.emberstone_tavern.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service
@@ -23,11 +23,11 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    private Boolean validatePersonData(PersonModel personModel) {
-        String email = personModel.getEmail();
-        String password = personModel.getPassword();
-        String firstName = personModel.getFirstName();
-        String lastName = personModel.getLastName();
+    private Boolean validatePersonData(UserModel userModel) {
+        String email = userModel.getEmail();
+        String password = userModel.getPassword();
+        String firstName = userModel.getFirstName();
+        String lastName = userModel.getLastName();
         boolean validEmail = Pattern.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", email);
         boolean validPassword = password != null && password.length() >= 6;
 
@@ -36,22 +36,26 @@ public class PersonService {
     /**
      * Register a new person
      */
-    public HttpResponseModel<String> registerNewPerson(PersonModel personModel) {
+    public HttpResponseModel<String> registerNewPerson(UserModel userModel) {
         try {
-            Boolean isValidUser = validatePersonData(personModel);
+            Boolean isValidUser = validatePersonData(userModel);
 
             if (isValidUser) {
-                Optional<PersonModel> persistedPerson = personRepository.findByEmail(personModel.getEmail());
+                Optional<PersonModel> persistedPerson = personRepository.findByEmail(userModel.getEmail());
                 if (persistedPerson.isPresent()) {
                     return HttpResponseModel.success("User already exists");
                 }
+                PersonModel newPerson = new PersonModel();
+                newPerson.setEmail(userModel.getEmail());
+                newPerson.setFirstName(userModel.getFirstName());
+                newPerson.setLastName(userModel.getLastName());
 
                 PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-                personModel.setPassword(encoder.encode(personModel.getPassword()));
+                newPerson.setPassword(encoder.encode(userModel.getPassword()));
 
-                personModel.setAccountStatus(PersonModel.AccountStatus.PENDING);
+                newPerson.setAccountStatus(PersonModel.AccountStatus.PENDING);
 
-                personRepository.save(personModel);
+                personRepository.save(newPerson);
                 return HttpResponseModel.success("User created");
             }
 
@@ -63,25 +67,13 @@ public class PersonService {
         }
     }
 
-    public Optional<PersonModel> getActivePersonById(UUID id) {
-        try {
-            return personRepository.findById(id);
-
-        } catch (Exception e) {
-            // Handle exception or log the error
-            throw new RuntimeException("Failed to get person by id: " + e.getMessage());
-        }
-    }
-    /**
-     * Gets the user data for the person using the application
-     */
     public Optional<PersonModel> getActivePersonByEmail(String email) {
         try {
             return personRepository.findByEmail(email);
 
         } catch (Exception e) {
             // Handle exception or log the error
-            throw new RuntimeException("Failed to get person by email: " + e.getMessage());
+            throw new RuntimeException("Failed to get person by id: " + e.getMessage());
         }
     }
 }

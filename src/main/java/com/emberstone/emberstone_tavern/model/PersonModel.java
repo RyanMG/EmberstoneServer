@@ -1,5 +1,6 @@
 package com.emberstone.emberstone_tavern.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnTransformer;
@@ -31,6 +32,7 @@ public class PersonModel {
     @Column(name = "profile_image")
     private String profileImage;
 
+    @JsonIgnore
     private String password;
 
      @Enumerated(EnumType.STRING)

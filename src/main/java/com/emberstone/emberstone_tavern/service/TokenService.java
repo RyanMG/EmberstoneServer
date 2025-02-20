@@ -2,11 +2,10 @@ package com.emberstone.emberstone_tavern.service;
 
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
+import com.emberstone.emberstone_tavern.model.UserModel;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -24,7 +23,7 @@ public class TokenService {
         this.personService = personService;
     }
 
-    public HttpResponseModel<String> generateToken(PersonModel userDetails) {
+    public HttpResponseModel<String> generateToken(UserModel userDetails) {
         Optional<PersonModel> persistedUser = personService.getActivePersonByEmail(userDetails.getEmail());
         if (persistedUser.isPresent()) {
             PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
