@@ -5,6 +5,7 @@ import com.emberstone.emberstone_tavern.service.PersonService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/person")
@@ -15,8 +16,8 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @GetMapping("/")
-    public Optional<PersonModel> getActivePersonByEmail(@PathVariable String email) {
-        return personService.getActivePersonByEmail(email);
+    @GetMapping("/{id}")
+    public Optional<PersonModel> getActivePersonById(@PathVariable UUID id) {
+        return personService.getActivePersonById(id);
     }
 }

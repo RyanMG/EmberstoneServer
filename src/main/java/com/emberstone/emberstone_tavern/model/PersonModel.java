@@ -2,13 +2,15 @@ package com.emberstone.emberstone_tavern.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnTransformer;
+
 import java.util.UUID;
 
 @Data
 @Entity
 @Table(name="person")
 public class PersonModel {
-    public enum UserStatus {
+    public enum AccountStatus {
         PENDING, ACTIVE, DELETED
     }
 
@@ -16,12 +18,23 @@ public class PersonModel {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "first_name")
     private String firstName;
+
+    @Column(name = "last_name")
     private String lastName;
+
     private String email;
+
     private String bio;
+
+    @Column(name = "profile_image")
     private String profileImage;
 
+    private String password;
+
      @Enumerated(EnumType.STRING)
-     private UserStatus accountStatus;
+     @Column(name = "account_status")
+     @ColumnTransformer(write="?::account_status_types")
+     private AccountStatus accountStatus;
 }
