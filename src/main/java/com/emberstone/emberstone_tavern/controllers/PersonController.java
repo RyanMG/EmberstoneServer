@@ -1,7 +1,6 @@
 package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.model.PersonModel;
-import com.emberstone.emberstone_tavern.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
