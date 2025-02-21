@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service
@@ -70,6 +71,16 @@ public class PersonService {
     public Optional<PersonModel> getActivePersonByEmail(String email) {
         try {
             return personRepository.findByEmail(email);
+
+        } catch (Exception e) {
+            // Handle exception or log the error
+            throw new RuntimeException("Failed to get person by id: " + e.getMessage());
+        }
+    }
+
+    public Optional<PersonModel> getPersonById(UUID id) {
+        try {
+            return personRepository.findById(id);
 
         } catch (Exception e) {
             // Handle exception or log the error
