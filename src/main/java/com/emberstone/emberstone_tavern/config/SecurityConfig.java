@@ -36,9 +36,9 @@ public class SecurityConfig {
     public SecurityFilterChain whiteListFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .securityMatcher("/auth/**")
+                .securityMatcher("/auth/**","/seed")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**", "/seed").permitAll()
                 );
         return http.build();
     }

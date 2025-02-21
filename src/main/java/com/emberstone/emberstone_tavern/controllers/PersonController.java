@@ -22,7 +22,6 @@ public class PersonController {
 
     @GetMapping("")
     public Optional<PersonModel> getActivePersonById(Authentication authentication) {
-        log.info("authentication {}", authentication.getName());
         return personService.getActivePersonByEmail(authentication.getName());
     }
 }

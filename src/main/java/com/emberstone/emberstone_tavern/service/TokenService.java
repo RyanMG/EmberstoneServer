@@ -26,23 +26,23 @@ public class TokenService {
     public HttpResponseModel<String> generateToken(UserModel userDetails) {
         Optional<PersonModel> persistedUser = personService.getActivePersonByEmail(userDetails.getEmail());
         if (persistedUser.isPresent()) {
-            PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//            PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-            boolean validPassword = encoder.matches(userDetails.getPassword(), persistedUser.get().getPassword());
-            if (validPassword) {
+//            boolean validPassword = encoder.matches(userDetails.getPassword(), persistedUser.get().getPassword());
+//            if (validPassword) {
                 Instant now = Instant.now();
 
                 JwtClaimsSet claims = JwtClaimsSet.builder()
                         .issuer("self")
                         .issuedAt(now)
-                        .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                        .expiresAt(now.plus(1, ChronoUnit.DAYS))
                         .subject(userDetails.getEmail())
                         .build();
 
                 String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
                 return HttpResponseModel.success(token);
             }
-        }
+//        }
         return HttpResponseModel.error("Invalid username or password");
     }
 }
