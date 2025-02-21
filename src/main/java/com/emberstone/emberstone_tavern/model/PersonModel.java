@@ -3,7 +3,8 @@ package com.emberstone.emberstone_tavern.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.UUID;
 
@@ -37,6 +38,6 @@ public class PersonModel {
 
      @Enumerated(EnumType.STRING)
      @Column(name = "account_status")
-     @ColumnTransformer(write="?::account_status_types")
+     @JdbcType(PostgreSQLEnumJdbcType.class)
      private AccountStatus accountStatus;
 }

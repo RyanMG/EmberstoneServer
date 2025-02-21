@@ -4,15 +4,12 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-
-import java.sql.Timestamp;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
 @Entity
 @Table(name="campaign")
-public class CampaignModel {
+public class CampaignOverviewModel {
     public enum CampaignStatus {
         ACTIVE, COMPLETE
     }
@@ -25,10 +22,6 @@ public class CampaignModel {
 
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private PersonModel owner;
-
     @Column(name = "icon_link")
     private String iconLink;
 
@@ -36,15 +29,4 @@ public class CampaignModel {
     @Column(name = "campaign_status")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private CampaignStatus campaignStatus;
-
-    @Column(name = "created_at")
-    private Timestamp createdAt;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "campaign_person_join",
-            joinColumns = @JoinColumn(name="campaign_id"),
-            inverseJoinColumns = @JoinColumn(name="player_id")
-    )
-    private Set<PersonModel> members;
 }
