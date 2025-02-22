@@ -35,6 +35,14 @@ public class CampaignService {
         return new HashSet<>();
     }
 
+    public Set<CampaignOverviewModel> getCompletedCampaignsForUser(String email) {
+        Optional<PersonModel> user = personService.getActivePersonByEmail(email);
+        if (user.isPresent()) {
+            return campaignRepository.getAllCompletedCampaignsForUser(user.get().getId());
+        }
+        return new HashSet<>();
+    }
+
     public Optional<CampaignModel> getCampaignById(String email, UUID id) {
         Optional<PersonModel> user = personService.getActivePersonByEmail(email);
         if (user.isPresent()) {

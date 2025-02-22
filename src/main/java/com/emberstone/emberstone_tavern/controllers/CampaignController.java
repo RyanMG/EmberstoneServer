@@ -26,6 +26,12 @@ public class CampaignController {
     public Set<CampaignOverviewModel> getActiveCampaignsForUser(Authentication authentication) {
         return campaignService.getActiveCampaignsForUser(authentication.getName());
     }
+
+    @GetMapping("/completed")
+    public Set<CampaignOverviewModel> getCompletedCampaignsForUser(Authentication authentication) {
+        return campaignService.getCompletedCampaignsForUser(authentication.getName());
+    }
+
     @GetMapping("{id}")
     public Optional<CampaignModel> getCampaignById(Authentication authentication, @PathVariable UUID id) {
         return campaignService.getCampaignById(authentication.getName(), id);

@@ -15,4 +15,7 @@ public interface CampaignRepository extends JpaRepository<CampaignModel, UUID> {
 
     @Query("SELECT c FROM CampaignOverviewModel c WHERE c.id IN (select cpj.campaign_id from CampaignPersonJoinModel cpj where cpj.player_id = :userId) AND c.campaignStatus = 'ACTIVE'")
     Set<CampaignOverviewModel> getAllActiveCampaignsForUser(@Param("userId") UUID userId);
+
+    @Query("SELECT c FROM CampaignOverviewModel c WHERE c.id IN (select cpj.campaign_id from CampaignPersonJoinModel cpj where cpj.player_id = :userId) AND c.campaignStatus = 'COMPLETE'")
+    Set<CampaignOverviewModel> getAllCompletedCampaignsForUser(@Param("userId") UUID userId);
 }
