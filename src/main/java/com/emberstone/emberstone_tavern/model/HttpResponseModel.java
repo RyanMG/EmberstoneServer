@@ -10,14 +10,16 @@ import lombok.Builder;
 public class HttpResponseModel<T> {
     private boolean success;
     private String message;
+    private T data;
 
     public static <T> HttpResponseModel<T> empty() {
-        return success("success");
+        return success("success", null);
     }
 
-    public static <T> HttpResponseModel<T> success(String message) {
+    public static <T> HttpResponseModel<T> success(String message, T data) {
         return HttpResponseModel.<T>builder()
                 .message(message)
+                .data(data)
                 .success(true)
                 .build();
     }
@@ -25,6 +27,7 @@ public class HttpResponseModel<T> {
     public static <T> HttpResponseModel<T> error(String message) {
         return HttpResponseModel.<T>builder()
                 .message(message)
+                .data(null)
                 .success(false)
                 .build();
     }

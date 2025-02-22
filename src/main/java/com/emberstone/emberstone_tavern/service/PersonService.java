@@ -44,7 +44,7 @@ public class PersonService {
             if (isValidUser) {
                 Optional<PersonModel> persistedPerson = personRepository.findByEmail(userModel.getEmail());
                 if (persistedPerson.isPresent()) {
-                    return HttpResponseModel.success("User already exists");
+                    return HttpResponseModel.success("User already exists", null);
                 }
                 PersonModel newPerson = new PersonModel();
                 newPerson.setEmail(userModel.getEmail());
@@ -57,7 +57,7 @@ public class PersonService {
                 newPerson.setAccountStatus(PersonModel.AccountStatus.PENDING);
 
                 personRepository.save(newPerson);
-                return HttpResponseModel.success("User created");
+                return HttpResponseModel.success("User created", null);
             }
 
             return HttpResponseModel.error("Invalid user data");

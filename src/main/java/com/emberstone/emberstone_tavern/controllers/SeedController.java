@@ -24,7 +24,7 @@ public class SeedController {
         try {
             log.info("Seed database starting...");
             seedRepository.seedDatabase();
-            return HttpResponseModel.success("Database successfully loaded");
+            return HttpResponseModel.success("Database successfully loaded", null);
 
         } catch (Exception e) {
             return HttpResponseModel.error("Error seeding database: " + e.getMessage());

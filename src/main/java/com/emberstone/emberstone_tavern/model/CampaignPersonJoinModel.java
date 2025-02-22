@@ -10,7 +10,7 @@ import java.util.UUID;
 @Table(name="campaign_person_join")
 public class CampaignPersonJoinModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "player_id")

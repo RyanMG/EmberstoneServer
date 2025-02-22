@@ -40,7 +40,7 @@ public class TokenService {
                         .build();
 
                 String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-                return HttpResponseModel.success(token);
+                return HttpResponseModel.success("Login success", token);
             }
 //        }
         return HttpResponseModel.error("Invalid username or password");

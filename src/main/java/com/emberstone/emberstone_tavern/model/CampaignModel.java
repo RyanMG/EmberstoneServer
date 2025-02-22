@@ -26,6 +26,9 @@ public class CampaignModel {
 
     private String description;
 
+    @Column(name= "campaign_code")
+    private String campaignCode;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "owner_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel owner;

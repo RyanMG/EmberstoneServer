@@ -42,6 +42,11 @@ public class CampaignController {
         return campaignService.deleteUserFromCampaign(authentication.getName(), campaignId, userId);
     }
 
+    @PutMapping("/join/{campaignCode}")
+    public HttpResponseModel<String> addUserToCampaign(Authentication authentication, @PathVariable String campaignCode) {
+        return campaignService.addUserToCampaign(authentication.getName(), campaignCode);
+    }
+
     @PostMapping("")
     public Optional<CampaignModel> createNewCampaign(Authentication authentication, @RequestBody CampaignModel campaign) {
         return campaignService.createNewCampaign(authentication.getName(), campaign);
