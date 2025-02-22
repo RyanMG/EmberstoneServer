@@ -1,5 +1,6 @@
 package com.emberstone.emberstone_tavern.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.JdbcType;
@@ -26,8 +27,12 @@ public class CampaignModel {
     private String description;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    @JoinColumn(name = "owner_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel owner;
+
+    @Column(name = "owner_id")
+    @JsonIgnore
+    private UUID ownerId;
 
     @Column(name = "icon_link")
     private String iconLink;

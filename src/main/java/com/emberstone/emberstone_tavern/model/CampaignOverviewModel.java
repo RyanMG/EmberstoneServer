@@ -25,6 +25,9 @@ public class CampaignOverviewModel {
     @Column(name = "icon_link")
     private String iconLink;
 
+    @Column(name = "owner_id")
+    private UUID ownerId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "campaign_status")
     @JdbcType(PostgreSQLEnumJdbcType.class)

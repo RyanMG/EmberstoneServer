@@ -8,6 +8,7 @@ import com.emberstone.emberstone_tavern.repository.CampaignPersonJoinRepository;
 import com.emberstone.emberstone_tavern.repository.CampaignRepository;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -73,5 +74,19 @@ public class CampaignService {
         }
 
         return HttpResponseModel.error("User was not deleted");
+    }
+
+    public Optional<CampaignModel> createNewCampaign(String email, CampaignModel campaign) {
+        Optional<PersonModel> user = personService.getActivePersonByEmail(email);
+        if (user.isPresent()) {
+            campaign.setOwnerId(user.get().getId());
+            campaign.setCampaignStatus(CampaignModel.CampaignStatus.ACTIVE);
+            campaign.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+            CampaignModel newCampaign = campaignRepository.save(campaign);
+            return Optional.of(newCampaign);
+        }
+
+        return Optional.empty();
     }
 }

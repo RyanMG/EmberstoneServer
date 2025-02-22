@@ -41,4 +41,9 @@ public class CampaignController {
     public HttpResponseModel<String> deleteUserFromCampaign(Authentication authentication, @PathVariable UUID campaignId, @PathVariable UUID userId) {
         return campaignService.deleteUserFromCampaign(authentication.getName(), campaignId, userId);
     }
+
+    @PostMapping("")
+    public Optional<CampaignModel> createNewCampaign(Authentication authentication, @RequestBody CampaignModel campaign) {
+        return campaignService.createNewCampaign(authentication.getName(), campaign);
+    }
 }
