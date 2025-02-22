@@ -2,12 +2,10 @@ package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.model.CampaignModel;
 import com.emberstone.emberstone_tavern.model.CampaignOverviewModel;
+import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.service.CampaignService;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.Set;
@@ -31,5 +29,10 @@ public class CampaignController {
     @GetMapping("{id}")
     public Optional<CampaignModel> getCampaignById(Authentication authentication, @PathVariable UUID id) {
         return campaignService.getCampaignById(authentication.getName(), id);
+    }
+
+    @DeleteMapping("/{campaignId}/users/{userId}")
+    public HttpResponseModel<String> deleteUserFromCampaign(Authentication authentication, @PathVariable UUID campaignId, @PathVariable UUID userId) {
+        return campaignService.deleteUserFromCampaign(authentication.getName(), campaignId, userId);
     }
 }

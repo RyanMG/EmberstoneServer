@@ -8,7 +8,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name="campaign_person_join")
-public class CampaignPersonJoin {
+public class CampaignPersonJoinModel {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;

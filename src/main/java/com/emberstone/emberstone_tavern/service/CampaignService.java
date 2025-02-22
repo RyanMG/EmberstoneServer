@@ -2,7 +2,9 @@ package com.emberstone.emberstone_tavern.service;
 
 import com.emberstone.emberstone_tavern.model.CampaignModel;
 import com.emberstone.emberstone_tavern.model.CampaignOverviewModel;
+import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
+import com.emberstone.emberstone_tavern.repository.CampaignPersonJoinRepository;
 import com.emberstone.emberstone_tavern.repository.CampaignRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +19,12 @@ public class CampaignService {
 
     private final PersonService personService;
     private final CampaignRepository campaignRepository;
+    private final CampaignPersonJoinRepository campaignPersonJoinRepository;
 
-    public CampaignService(PersonService personService, CampaignRepository campaignRepository) {
+    public CampaignService(PersonService personService, CampaignRepository campaignRepository, CampaignPersonJoinRepository campaignPersonJoinRepository) {
         this.personService = personService;
         this.campaignRepository = campaignRepository;
+        this.campaignPersonJoinRepository = campaignPersonJoinRepository;
     }
 
     public Set<CampaignOverviewModel> getActiveCampaignsForUser(String email) {
@@ -45,5 +49,21 @@ public class CampaignService {
             }
         }
         return Optional.empty();
+    }
+
+    public HttpResponseModel<String> deleteUserFromCampaign(String email, UUID campaignId, UUID userId) {
+        Optional<PersonModel> activeUser = personService.getActivePersonByEmail(email);
+        Optional<CampaignModel> campaign = campaignRepository.findById(campaignId);
+        if (activeUser.isPresent() && campaign.isPresent()) {
+            if (campaign.get().getOwner().getId().equals(userId) || activeUser.get().getId().equals(userId)) {
+                Integer resp = campaignPersonJoinRepository.deletePlayerFromCampaign(userId, campaignId);
+                if (resp > 0) {
+                    return HttpResponseModel.success("User was deleted");
+                }
+            }
+
+        }
+
+        return HttpResponseModel.error("User was not deleted");
     }
 }
