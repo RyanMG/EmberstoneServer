@@ -6,7 +6,6 @@ build/
 .gradle
 .gradletasknamecache
 gradle-app.setting
-!gradle-wrapper.jar
 gradle.properties
 
 ##############################
@@ -29,12 +28,10 @@ out/
 ##############################
 .mtj.tmp/
 *.class
-*.jar
 *.war
 *.ear
 *.nar
 hs_err_pid*
 
 schema.txt
-src/main/resources/secret.properties
 src/main/resources/certs
