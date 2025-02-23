@@ -27,17 +27,25 @@ public class SecurityConfig {
     @Value("${jwt.key}")
     private String jwtKey;
 
-    public SecurityConfig() {
-    }
+    public SecurityConfig() {}
+
+    public static final String[] WHITELIST_URLS = {
+            "/",
+            "/index.html",
+            "/favicon.ico",
+            "/static/**",
+            "/actuator/**",
+            "/error/**"
+    };
 
     @Bean
     @Order(1)
     public SecurityFilterChain whiteListFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .securityMatcher("/auth/**","/seed")
+                .securityMatcher(WHITELIST_URLS)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/seed").permitAll()
+                        .requestMatchers(WHITELIST_URLS).permitAll()
                 );
         return http.build();
     }
