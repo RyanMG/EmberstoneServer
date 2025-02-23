@@ -35,6 +35,7 @@ public class SecurityConfig {
             "/favicon.ico",
             "/static/**",
             "/actuator/**",
+            "/auth/**",
             "/error/**"
     };
 
