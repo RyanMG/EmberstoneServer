@@ -5,7 +5,11 @@ import com.emberstone.emberstone_tavern.model.PersonModel;
 import com.emberstone.emberstone_tavern.model.UserModel;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,23 +30,25 @@ public class TokenService {
     public HttpResponseModel<String> generateToken(UserModel userDetails) {
         Optional<PersonModel> persistedUser = personService.getActivePersonByEmail(userDetails.getEmail());
         if (persistedUser.isPresent()) {
-//            PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+            PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+            boolean validPassword = encoder.matches(userDetails.getPassword(), persistedUser.get().getPassword());
 
-//            boolean validPassword = encoder.matches(userDetails.getPassword(), persistedUser.get().getPassword());
-//            if (validPassword) {
+            if (validPassword) {
                 Instant now = Instant.now();
 
                 JwtClaimsSet claims = JwtClaimsSet.builder()
                         .issuer("self")
                         .issuedAt(now)
-                        .expiresAt(now.plus(1, ChronoUnit.DAYS))
-                        .subject(userDetails.getEmail())
+                        .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                        .subject(persistedUser.get().getEmail())
                         .build();
 
-                String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+                var encoderParameters = JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS512).build(), claims);
+                String token = this.jwtEncoder.encode(encoderParameters).getTokenValue();
+
                 return HttpResponseModel.success("Login success", token);
             }
-//        }
+        }
         return HttpResponseModel.error("Invalid username or password");
     }
 }
