@@ -41,6 +41,9 @@ public class CampaignModel {
     @JoinColumn(name = "campaign_setting_id", referencedColumnName = "id", insertable = false, updatable = false)
     private CampaignSettingModel campaignSetting;
 
+    @Column(name = "campaign_setting_id")
+    private Integer campaignSettingId;
+
     @Column(name = "icon_link")
     private String iconLink;
 
