@@ -122,6 +122,30 @@ public class CampaignService {
         }
     }
 
+    public Optional<CampaignModel> updateCampaign(String email, CampaignModel updatedCampaign) {
+        try {
+            Optional<PersonModel> user = personService.getActivePersonByEmail(email);
+            if (user.isPresent()) {
+                Optional<CampaignModel> existingCampaignMatch = campaignRepository.findById(updatedCampaign.getId());
+                if (existingCampaignMatch.isPresent()) {
+                    CampaignModel campaign = existingCampaignMatch.get();
+                    campaign.setTitle(updatedCampaign.getTitle());
+                    campaign.setDescription(updatedCampaign.getDescription());
+                    campaign.setIconLink(updatedCampaign.getIconLink());
+
+                    CampaignModel updated = campaignRepository.save(campaign);
+                    return Optional.of(updated);
+                }
+
+            }
+
+            return Optional.empty();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update campaign: " + e.getMessage());
+        }
+    }
+
     public HttpResponseModel<String> addUserToCampaign(String email, String campaignCode) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);

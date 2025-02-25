@@ -54,6 +54,11 @@ public class CampaignController {
         return campaignService.createNewCampaign(authentication.getName(), campaign);
     }
 
+    @PutMapping("/{id}")
+    public Optional<CampaignModel> updateCampaign(Authentication authentication, @RequestBody CampaignModel campaign) {
+        return campaignService.updateCampaign(authentication.getName(), campaign);
+    }
+
     @GetMapping("/settings")
     public List<CampaignSettingModel> getCampaignSettings() {
         return campaignService.getCampaignSettings();
