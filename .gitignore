@@ -33,5 +33,5 @@ out/
 *.nar
 hs_err_pid*
 
-schema.txt
+schema.sql
 src/main/resources/certs

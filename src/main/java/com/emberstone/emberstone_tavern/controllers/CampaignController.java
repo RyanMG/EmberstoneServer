@@ -2,11 +2,13 @@ package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.model.CampaignModel;
 import com.emberstone.emberstone_tavern.model.CampaignOverviewModel;
+import com.emberstone.emberstone_tavern.model.CampaignSettingModel;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.service.CampaignService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -50,5 +52,10 @@ public class CampaignController {
     @PostMapping("")
     public Optional<CampaignModel> createNewCampaign(Authentication authentication, @RequestBody CampaignModel campaign) {
         return campaignService.createNewCampaign(authentication.getName(), campaign);
+    }
+
+    @GetMapping("/settings")
+    public List<CampaignSettingModel> getCampaignSettings() {
+        return campaignService.getCampaignSettings();
     }
 }

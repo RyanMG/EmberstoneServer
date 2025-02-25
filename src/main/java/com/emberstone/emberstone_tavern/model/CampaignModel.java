@@ -37,6 +37,10 @@ public class CampaignModel {
     @JsonIgnore
     private UUID ownerId;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "campaign_setting_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private CampaignSettingModel campaignSetting;
+
     @Column(name = "icon_link")
     private String iconLink;
 
