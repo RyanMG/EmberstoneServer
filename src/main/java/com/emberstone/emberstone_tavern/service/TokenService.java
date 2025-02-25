@@ -39,7 +39,7 @@ public class TokenService {
                 JwtClaimsSet claims = JwtClaimsSet.builder()
                         .issuer("self")
                         .issuedAt(now)
-                        .expiresAt(now.plus(1, ChronoUnit.WEEKS))
+                        .expiresAt(now.plus(7, ChronoUnit.DAYS))
                         .subject(persistedUser.get().getEmail())
                         .build();
 
