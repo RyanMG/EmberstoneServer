@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/campaigns/invite")
+@RequestMapping("api/campaigns/invites")
 public class CampaignInviteController {
     private final CampaignInviteService campaignInviteService;
 
