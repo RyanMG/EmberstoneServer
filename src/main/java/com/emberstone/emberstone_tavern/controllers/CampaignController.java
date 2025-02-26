@@ -1,9 +1,7 @@
 package com.emberstone.emberstone_tavern.controllers;
 
-import com.emberstone.emberstone_tavern.model.CampaignModel;
-import com.emberstone.emberstone_tavern.model.CampaignOverviewModel;
-import com.emberstone.emberstone_tavern.model.CampaignSettingModel;
-import com.emberstone.emberstone_tavern.model.HttpResponseModel;
+import com.emberstone.emberstone_tavern.dto.EmailDTO;
+import com.emberstone.emberstone_tavern.model.*;
 import com.emberstone.emberstone_tavern.service.CampaignService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +45,16 @@ public class CampaignController {
     @PutMapping("/join/{campaignCode}")
     public HttpResponseModel<String> addUserToCampaign(Authentication authentication, @PathVariable String campaignCode) {
         return campaignService.addUserToCampaign(authentication.getName(), campaignCode);
+    }
+
+    @PostMapping("/{id}/invite")
+    public HttpResponseModel<String> inviteMemberByEmail(Authentication authentication, @PathVariable UUID id, @RequestBody EmailDTO email) {
+        return campaignService.inviteMemberByEmail(authentication.getName(), id, email.getEmail());
+    }
+
+    @GetMapping("/invites")
+    public List<CampaignPersonInvite> getMemberInvites(Authentication authentication) {
+        return campaignService.getMemberInvites(authentication.getName());
     }
 
     @PostMapping("")

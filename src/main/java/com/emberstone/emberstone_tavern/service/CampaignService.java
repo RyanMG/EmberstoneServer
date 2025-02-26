@@ -1,10 +1,9 @@
 package com.emberstone.emberstone_tavern.service;
 
 import com.emberstone.emberstone_tavern.model.*;
-import com.emberstone.emberstone_tavern.repository.CampaignSettingRepository;
+import com.emberstone.emberstone_tavern.repository.*;
 import com.emberstone.emberstone_tavern.util.CampaignUtils;
-import com.emberstone.emberstone_tavern.repository.CampaignPersonJoinRepository;
-import com.emberstone.emberstone_tavern.repository.CampaignRepository;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -17,20 +16,25 @@ public class CampaignService {
     private final CampaignRepository campaignRepository;
     private final CampaignPersonJoinRepository campaignPersonJoinRepository;
     private final CampaignSettingRepository campaignSettingRepository;
+    private final CampaignInviteRepository campaignInviteRepository;
     private final CampaignUtils campaignUtils;
+    private final PersonRepository personRepository;
 
     public CampaignService(
             PersonService personService,
             CampaignRepository campaignRepository,
             CampaignPersonJoinRepository campaignPersonJoinRepository,
             CampaignSettingRepository campaignSettingRepository,
-            CampaignUtils campaignUtils
-    ) {
+            CampaignInviteRepository campaignInviteRepository,
+            CampaignUtils campaignUtils,
+            PersonRepository personRepository) {
         this.personService = personService;
         this.campaignRepository = campaignRepository;
         this.campaignPersonJoinRepository = campaignPersonJoinRepository;
         this.campaignSettingRepository = campaignSettingRepository;
+        this.campaignInviteRepository = campaignInviteRepository;
         this.campaignUtils = campaignUtils;
+        this.personRepository = personRepository;
     }
 
     public Set<CampaignOverviewModel> getActiveCampaignsForUser(String email) {
@@ -162,7 +166,8 @@ public class CampaignService {
                 CampaignPersonJoinModel newMember = new CampaignPersonJoinModel();
                 newMember.setCampaign_id(campaign.getId());
                 newMember.setPlayer_id(user.get().getId());
-                CampaignPersonJoinModel resp = campaignPersonJoinRepository.save(newMember);
+
+                campaignPersonJoinRepository.save(newMember);
                 return HttpResponseModel.success("User added to campaign", campaign.getId().toString());
             }
 
@@ -170,6 +175,46 @@ public class CampaignService {
 
         } catch (Error e) {
             return HttpResponseModel.error("User was not added to the campaign");
+        }
+    }
+
+    public HttpResponseModel<String> inviteMemberByEmail(String ownerEmail, UUID id, String inviteeEmail) {
+        try {
+            Optional<CampaignModel> campaign = campaignRepository.findById(id);
+            Optional<PersonModel> owner = personService.getActivePersonByEmail(ownerEmail);
+
+            if (campaign.isPresent() && owner.isPresent()) {
+                Optional<PersonModel> invitee = personRepository.findByEmail(inviteeEmail);
+                if (invitee.isPresent()) {
+                    CampaignPersonInvite invite = new CampaignPersonInvite();
+                    invite.setCampaignId(campaign.get().getId());
+                    invite.setPlayerId(invitee.get().getId());
+                    invite.setOwnerId(owner.get().getId());
+                    invite.setInviteDate(new Timestamp(System.currentTimeMillis()));
+
+                    campaignInviteRepository.save(invite);
+                    return HttpResponseModel.success("Invite sent", null);
+                }
+                return HttpResponseModel.error("No player registered with that email.");
+            }
+
+            return HttpResponseModel.error("No matching campaign found");
+
+        } catch (Exception e) {
+            return HttpResponseModel.error("User was not added to the campaign");
+        }
+    }
+
+    public List<CampaignPersonInvite> getMemberInvites(String email) {
+        try {
+            Optional<PersonModel> user = personService.getActivePersonByEmail(email);
+            if (user.isPresent()) {
+                return campaignInviteRepository.getInvitesForPerson(user.get().getId());
+            }
+            return List.of((CampaignPersonInvite) null);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get invites: " + e.getMessage());
         }
     }
 
