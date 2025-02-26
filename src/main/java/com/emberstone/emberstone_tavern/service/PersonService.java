@@ -1,6 +1,7 @@
 package com.emberstone.emberstone_tavern.service;
 
 import com.emberstone.emberstone_tavern.controllers.AuthController;
+import com.emberstone.emberstone_tavern.dto.MemberDTO;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
 import com.emberstone.emberstone_tavern.model.UserModel;
@@ -74,7 +75,26 @@ public class PersonService {
 
         } catch (Exception e) {
             // Handle exception or log the error
-            throw new RuntimeException("Failed to get person by id: " + e.getMessage());
+            throw new RuntimeException("Failed to get active person by email: " + e.getMessage());
+        }
+    }
+
+    public Optional<MemberDTO> getPersonByEmail(String email) {
+        try {
+            Optional<PersonModel> personModel = personRepository.findByEmail(email);
+            if (personModel.isPresent()) {
+                MemberDTO person = new MemberDTO();
+                person.setId(personModel.get().getId());
+                person.setFirstName(personModel.get().getFirstName());
+                person.setLastName(personModel.get().getLastName());
+                return Optional.of(person);
+            }
+
+            return Optional.empty();
+
+        } catch (Exception e) {
+            // Handle exception or log the error
+            throw new RuntimeException("Failed to get person by email: " + e.getMessage());
         }
     }
 

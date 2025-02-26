@@ -16,27 +16,25 @@ public class CampaignService {
     private final CampaignRepository campaignRepository;
     private final CampaignPersonJoinRepository campaignPersonJoinRepository;
     private final CampaignSettingRepository campaignSettingRepository;
-    private final CampaignInviteRepository campaignInviteRepository;
     private final CampaignUtils campaignUtils;
-    private final PersonRepository personRepository;
 
     public CampaignService(
             PersonService personService,
             CampaignRepository campaignRepository,
             CampaignPersonJoinRepository campaignPersonJoinRepository,
             CampaignSettingRepository campaignSettingRepository,
-            CampaignInviteRepository campaignInviteRepository,
-            CampaignUtils campaignUtils,
-            PersonRepository personRepository) {
+            CampaignUtils campaignUtils
+    ) {
         this.personService = personService;
         this.campaignRepository = campaignRepository;
         this.campaignPersonJoinRepository = campaignPersonJoinRepository;
         this.campaignSettingRepository = campaignSettingRepository;
-        this.campaignInviteRepository = campaignInviteRepository;
         this.campaignUtils = campaignUtils;
-        this.personRepository = personRepository;
     }
 
+    /**
+     * Gets all campaigns for a user which are currently active
+     */
     public Set<CampaignOverviewModel> getActiveCampaignsForUser(String email) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
@@ -49,7 +47,9 @@ public class CampaignService {
             throw new RuntimeException("Failed to get active campaigns for user: " + e.getMessage());
         }
     }
-
+    /**
+     * Gets all campaigns for a user which are currently marked as complete
+     */
     public Set<CampaignOverviewModel> getCompletedCampaignsForUser(String email) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
@@ -62,8 +62,21 @@ public class CampaignService {
             throw new RuntimeException("Failed to get completed campaigns for user: " + e.getMessage());
         }
     }
+    /**
+     * Gets a campaign by ID
+     */
+    public Optional<CampaignModel> getCampaignById(UUID id) {
+        try {
+            return campaignRepository.findById(id);
 
-    public Optional<CampaignModel> getCampaignById(String email, UUID id) {
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get campaign by ID: " + e.getMessage());
+        }
+    }
+    /**
+     * Gets a campaign by ID ONLY if the user is a member
+     */
+    public Optional<CampaignModel> getUserCampaignById(String email, UUID id) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
@@ -80,7 +93,9 @@ public class CampaignService {
             throw new RuntimeException("Failed to get campaign by ID: " + e.getMessage());
         }
     }
-
+    /**
+     * Remove a user from a campaign
+     */
     public HttpResponseModel<String> deleteUserFromCampaign(String email, UUID campaignId, UUID userId) {
         try {
             Optional<PersonModel> activeUser = personService.getActivePersonByEmail(email);
@@ -101,7 +116,9 @@ public class CampaignService {
             throw new RuntimeException("Failed to remove user from campaign: " + e.getMessage());
         }
     }
-
+    /**
+     * Create a new campaign
+     */
     public Optional<CampaignModel> createNewCampaign(String email, CampaignModel campaign) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
@@ -125,7 +142,9 @@ public class CampaignService {
             throw new RuntimeException("Failed to create new campaign: " + e.getMessage());
         }
     }
-
+    /**
+     * Update an existing campaign
+     */
     public Optional<CampaignModel> updateCampaign(String email, CampaignModel updatedCampaign) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
@@ -149,75 +168,29 @@ public class CampaignService {
             throw new RuntimeException("Failed to update campaign: " + e.getMessage());
         }
     }
-
-    public HttpResponseModel<String> addUserToCampaign(String email, String campaignCode) {
+    /**
+     * Add a user as a member of a campaign
+     */
+    public HttpResponseModel<String> addUserToCampaign(PersonModel user, CampaignModel campaign) {
         try {
-            Optional<PersonModel> user = personService.getActivePersonByEmail(email);
-            if (user.isPresent()) {
-                CampaignModel campaign = campaignRepository.getByCampaignCode(campaignCode);
-                if (campaign == null) {
-                    return HttpResponseModel.error("No campaign found for this code");
-                }
-
-                if (campaignUtils.userIsInCampaign(user.get().getId(), campaign)) {
-                    return HttpResponseModel.success("User is already in campaign", campaign.getId().toString());
-                }
-
-                CampaignPersonJoinModel newMember = new CampaignPersonJoinModel();
-                newMember.setCampaign_id(campaign.getId());
-                newMember.setPlayer_id(user.get().getId());
-
-                campaignPersonJoinRepository.save(newMember);
-                return HttpResponseModel.success("User added to campaign", campaign.getId().toString());
+            if (campaignUtils.userIsInCampaign(user.getId(), campaign)) {
+                return HttpResponseModel.success("User is already in campaign", campaign.getId().toString());
             }
 
-            return HttpResponseModel.error("User was not added to the campaign");
+            CampaignPersonJoinModel newMember = new CampaignPersonJoinModel();
+            newMember.setCampaign_id(campaign.getId());
+            newMember.setPlayer_id(user.getId());
+
+            campaignPersonJoinRepository.save(newMember);
+            return HttpResponseModel.success("User added to campaign", campaign.getId().toString());
 
         } catch (Error e) {
             return HttpResponseModel.error("User was not added to the campaign");
         }
     }
-
-    public HttpResponseModel<String> inviteMemberByEmail(String ownerEmail, UUID id, String inviteeEmail) {
-        try {
-            Optional<CampaignModel> campaign = campaignRepository.findById(id);
-            Optional<PersonModel> owner = personService.getActivePersonByEmail(ownerEmail);
-
-            if (campaign.isPresent() && owner.isPresent()) {
-                Optional<PersonModel> invitee = personRepository.findByEmail(inviteeEmail);
-                if (invitee.isPresent()) {
-                    CampaignPersonInvite invite = new CampaignPersonInvite();
-                    invite.setCampaignId(campaign.get().getId());
-                    invite.setPlayerId(invitee.get().getId());
-                    invite.setOwnerId(owner.get().getId());
-                    invite.setInviteDate(new Timestamp(System.currentTimeMillis()));
-
-                    campaignInviteRepository.save(invite);
-                    return HttpResponseModel.success("Invite sent", null);
-                }
-                return HttpResponseModel.error("No player registered with that email.");
-            }
-
-            return HttpResponseModel.error("No matching campaign found");
-
-        } catch (Exception e) {
-            return HttpResponseModel.error("User was not added to the campaign");
-        }
-    }
-
-    public List<CampaignPersonInvite> getMemberInvites(String email) {
-        try {
-            Optional<PersonModel> user = personService.getActivePersonByEmail(email);
-            if (user.isPresent()) {
-                return campaignInviteRepository.getInvitesForPerson(user.get().getId());
-            }
-            return List.of((CampaignPersonInvite) null);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get invites: " + e.getMessage());
-        }
-    }
-
+    /**
+     * Get all possible campaign settings
+     */
     public List<CampaignSettingModel> getCampaignSettings() {
         try {
             return campaignSettingRepository.findAll();

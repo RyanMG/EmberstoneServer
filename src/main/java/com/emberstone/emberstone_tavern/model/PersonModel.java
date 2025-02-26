@@ -36,8 +36,8 @@ public class PersonModel {
     @JsonIgnore
     private String password;
 
-     @Enumerated(EnumType.STRING)
-     @Column(name = "account_status")
-     @JdbcType(PostgreSQLEnumJdbcType.class)
-     private AccountStatus accountStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "account_status")
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    private AccountStatus accountStatus;
 }

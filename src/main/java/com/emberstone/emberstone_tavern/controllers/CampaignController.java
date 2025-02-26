@@ -1,7 +1,7 @@
 package com.emberstone.emberstone_tavern.controllers;
 
-import com.emberstone.emberstone_tavern.dto.EmailDTO;
 import com.emberstone.emberstone_tavern.model.*;
+import com.emberstone.emberstone_tavern.service.CampaignInviteService;
 import com.emberstone.emberstone_tavern.service.CampaignService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -11,15 +11,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-
 @RestController
 @RequestMapping("api/campaigns")
 public class CampaignController {
 
     private final CampaignService campaignService;
+    private final CampaignInviteService campaignInviteService;
 
-    public CampaignController(CampaignService campaignService) {
+    public CampaignController(CampaignService campaignService, CampaignInviteService campaignInviteService) {
         this.campaignService = campaignService;
+        this.campaignInviteService = campaignInviteService;
     }
 
     @GetMapping("/active")
@@ -34,7 +35,7 @@ public class CampaignController {
 
     @GetMapping("{id}")
     public Optional<CampaignModel> getCampaignById(Authentication authentication, @PathVariable UUID id) {
-        return campaignService.getCampaignById(authentication.getName(), id);
+        return campaignService.getUserCampaignById(authentication.getName(), id);
     }
 
     @DeleteMapping("/{campaignId}/users/{userId}")
@@ -44,17 +45,7 @@ public class CampaignController {
 
     @PutMapping("/join/{campaignCode}")
     public HttpResponseModel<String> addUserToCampaign(Authentication authentication, @PathVariable String campaignCode) {
-        return campaignService.addUserToCampaign(authentication.getName(), campaignCode);
-    }
-
-    @PostMapping("/{id}/invite")
-    public HttpResponseModel<String> inviteMemberByEmail(Authentication authentication, @PathVariable UUID id, @RequestBody EmailDTO email) {
-        return campaignService.inviteMemberByEmail(authentication.getName(), id, email.getEmail());
-    }
-
-    @GetMapping("/invites")
-    public List<CampaignPersonInvite> getMemberInvites(Authentication authentication) {
-        return campaignService.getMemberInvites(authentication.getName());
+        return campaignInviteService.joinByCampaignCode(authentication.getName(), campaignCode);
     }
 
     @PostMapping("")
