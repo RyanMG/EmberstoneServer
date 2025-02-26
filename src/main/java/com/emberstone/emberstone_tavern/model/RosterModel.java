@@ -1,5 +1,6 @@
 package com.emberstone.emberstone_tavern.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,10 @@ public class RosterModel {
     @OneToOne()
     @JoinColumn(name = "player_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel player;
+
+    @Column(name = "player_id")
+    @JsonIgnore
+    private UUID playerId;
 
     @Column(name = "campaign_id")
     private UUID campaignId;
