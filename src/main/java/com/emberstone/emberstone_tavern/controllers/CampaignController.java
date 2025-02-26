@@ -53,9 +53,14 @@ public class CampaignController {
         return campaignService.createNewCampaign(authentication.getName(), campaign);
     }
 
-    @PutMapping("/{id}")
-    public Optional<CampaignModel> updateCampaign(Authentication authentication, @RequestBody CampaignModel campaign) {
-        return campaignService.updateCampaign(authentication.getName(), campaign);
+    @PutMapping("/{campaignId}")
+    public Optional<CampaignModel> updateCampaign(Authentication authentication, @PathVariable UUID campaignId, @RequestBody CampaignModel campaign) {
+        return campaignService.updateCampaign(authentication.getName(), campaignId, campaign);
+    }
+
+    @DeleteMapping("/{campaignId}")
+    public HttpResponseModel<UUID> deleteCampaign(Authentication authentication, @PathVariable UUID campaignId) {
+        return campaignService.deleteCampaign(authentication.getName(), campaignId);
     }
 
     @GetMapping("/settings")

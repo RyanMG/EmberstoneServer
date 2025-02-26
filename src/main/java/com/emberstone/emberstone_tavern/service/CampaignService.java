@@ -6,6 +6,7 @@ import com.emberstone.emberstone_tavern.util.CampaignUtils;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.net.http.HttpResponse;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -145,12 +146,13 @@ public class CampaignService {
     /**
      * Update an existing campaign
      */
-    public Optional<CampaignModel> updateCampaign(String email, CampaignModel updatedCampaign) {
+    public Optional<CampaignModel> updateCampaign(String email, UUID campaignId, CampaignModel updatedCampaign) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
-                Optional<CampaignModel> existingCampaignMatch = campaignRepository.findById(updatedCampaign.getId());
-                if (existingCampaignMatch.isPresent()) {
+                Optional<CampaignModel> existingCampaignMatch = campaignRepository.findById(campaignId);
+
+                if (existingCampaignMatch.isPresent() && campaignUtils.userIsCampaignOwner(user.get().getId(), existingCampaignMatch.get().getOwnerId())) {
                     CampaignModel campaign = existingCampaignMatch.get();
                     campaign.setTitle(updatedCampaign.getTitle());
                     campaign.setDescription(updatedCampaign.getDescription());
@@ -166,6 +168,25 @@ public class CampaignService {
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to update campaign: " + e.getMessage());
+        }
+    }
+    /**
+     * Allows the owner to delete a campaign
+     */
+    public HttpResponseModel<UUID> deleteCampaign(String email, UUID campaignId) {
+        try {
+            Optional<PersonModel> user = personService.getActivePersonByEmail(email);
+            if (user.isPresent()) {
+                Optional<CampaignModel> existingCampaignMatch = campaignRepository.findById(campaignId);
+
+                if (existingCampaignMatch.isPresent() && campaignUtils.userIsCampaignOwner(user.get().getId(), existingCampaignMatch.get().getOwnerId())) {
+                    campaignRepository.deleteById(campaignId);
+                    return HttpResponseModel.success("Campaign was deleted", campaignId);
+                }
+            }
+            return HttpResponseModel.error("Error deleting campaign");
+        } catch (Exception e) {
+            return HttpResponseModel.error("Error deleting campaign: " + e.getMessage());
         }
     }
     /**
