@@ -13,7 +13,7 @@ public class FactionModel {
 
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "grand_alliance_id", referencedColumnName = "id", insertable = false, updatable = false)
     private GrandAllianceModel grandAlliance;
 }

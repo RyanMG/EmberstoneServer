@@ -13,7 +13,7 @@ public class RosterModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "player_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel player;
 
@@ -34,15 +34,15 @@ public class RosterModel {
     @Column(name = "emberstone_vault")
     private Integer emberstoneVault;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "grand_alliance_id", referencedColumnName = "id", insertable = false, updatable = false)
     private GrandAllianceModel grandAlliance;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "faction_id", referencedColumnName = "id", insertable = false, updatable = false)
     private FactionModel faction;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "ror_id", referencedColumnName = "id", insertable = false, updatable = false)
     private RegimentOfRenown regimentOfRenown;
 }

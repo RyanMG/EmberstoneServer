@@ -15,7 +15,7 @@ public class CampaignPersonInvite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "owner_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel owner;
 
@@ -23,7 +23,7 @@ public class CampaignPersonInvite {
     @JsonIgnore
     private UUID ownerId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "player_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel player;
 
@@ -31,7 +31,7 @@ public class CampaignPersonInvite {
     @JsonIgnore
     private UUID playerId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "campaign_id", referencedColumnName = "id", insertable = false, updatable = false)
     private CampaignOverviewModel campaignOverview;
 

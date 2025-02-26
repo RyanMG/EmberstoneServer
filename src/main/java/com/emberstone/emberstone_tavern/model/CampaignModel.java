@@ -29,7 +29,7 @@ public class CampaignModel {
     @Column(name= "campaign_code")
     private String campaignCode;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "owner_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel owner;
 
@@ -37,7 +37,7 @@ public class CampaignModel {
     @JsonIgnore
     private UUID ownerId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "campaign_setting_id", referencedColumnName = "id", insertable = false, updatable = false)
     private CampaignSettingModel campaignSetting;
 

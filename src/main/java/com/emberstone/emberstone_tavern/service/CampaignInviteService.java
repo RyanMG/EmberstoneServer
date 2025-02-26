@@ -126,7 +126,9 @@ public class CampaignInviteService {
                 if (invite.isPresent()) {
                     Optional<CampaignModel> campaign = campaignService.getCampaignById(invite.get().getCampaignId());
                     if (campaign.isPresent()) {
-                        return campaignService.addUserToCampaign(user.get(), campaign.get());
+                        HttpResponseModel<String> resp =  campaignService.addUserToCampaign(user.get(), campaign.get());
+                        campaignInviteRepository.deleteById(inviteId);
+                        return resp;
                     }
                 }
             }
