@@ -1,8 +1,10 @@
 package com.emberstone.emberstone_tavern.service;
 
+import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
 import com.emberstone.emberstone_tavern.model.RosterModel;
 import com.emberstone.emberstone_tavern.repository.RosterRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -54,6 +56,21 @@ public class RosterService {
             return Optional.empty();
         } catch (Exception e) {
             throw new RuntimeException("Failed to get campaign rosters for user: " + e.getMessage());
+        }
+    }
+
+    public HttpResponseModel<RosterModel> createUserCampaignRoster(String email, RosterModel roster) {
+        try {
+            Optional<PersonModel> user = personService.getActivePersonByEmail(email);
+            if (user.isPresent()) {
+                RosterModel savedRoster = rosterRepository.save(roster);
+                return HttpResponseModel.success("Roster created successfully", savedRoster);
+            }
+
+            return HttpResponseModel.error("No user found to create roster under");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create new campaign roster: " + e.getMessage());
         }
     }
 }

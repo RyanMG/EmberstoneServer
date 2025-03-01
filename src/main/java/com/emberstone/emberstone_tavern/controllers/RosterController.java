@@ -1,11 +1,9 @@
 package com.emberstone.emberstone_tavern.controllers;
 
+import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.RosterModel;
 import com.emberstone.emberstone_tavern.service.RosterService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
@@ -33,5 +31,10 @@ public class RosterController {
     @GetMapping("/campaign/{campaignId}")
     public Optional<RosterModel> getUserCampaignRoster(Authentication authentication, @PathVariable UUID campaignId) {
         return rosterService.getUserCampaignRoster(authentication.getName(), campaignId);
+    }
+
+    @PostMapping("/campaign/{campaignId}")
+    public HttpResponseModel<RosterModel> createUserCampaignRoster(Authentication authentication, @RequestBody RosterModel roster) {
+        return rosterService.createUserCampaignRoster(authentication.getName(), roster);
     }
 }
