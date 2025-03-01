@@ -6,6 +6,7 @@ import com.emberstone.emberstone_tavern.service.RosterService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -29,8 +30,8 @@ public class RosterController {
     }
 
     @GetMapping("/campaign/{campaignId}")
-    public Optional<RosterModel> getUserCampaignRoster(Authentication authentication, @PathVariable UUID campaignId) {
-        return rosterService.getUserCampaignRoster(authentication.getName(), campaignId);
+    public Optional<List<RosterModel>> getAllCampaignRosters(Authentication authentication, @PathVariable UUID campaignId) {
+        return rosterService.getAllCampaignRosters(authentication.getName(), campaignId);
     }
 
     @PostMapping("/campaign/{campaignId}")

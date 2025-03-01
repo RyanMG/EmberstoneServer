@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -17,4 +18,7 @@ public interface RosterRepository extends JpaRepository<RosterModel, Integer> {
 
     @Query("SELECT r FROM RosterModel r WHERE r.playerId = :playerId AND r.campaignId = :campaignId")
     Optional<RosterModel> getRosterByPlayerIdAndCampaignId(@Param("playerId") UUID playerId,  @Param("campaignId") UUID campaignId);
+
+    @Query("SELECT r FROM RosterModel r WHERE r.campaignId = :campaignId")
+    Optional<List<RosterModel>> getAllRostersByCampaignId(@Param("campaignId") UUID campaignId);
 }

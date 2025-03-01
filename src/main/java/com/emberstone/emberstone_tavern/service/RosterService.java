@@ -1,5 +1,6 @@
 package com.emberstone.emberstone_tavern.service;
 
+import com.emberstone.emberstone_tavern.model.CampaignModel;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
 import com.emberstone.emberstone_tavern.model.RosterModel;
@@ -7,6 +8,7 @@ import com.emberstone.emberstone_tavern.repository.RosterRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -15,10 +17,12 @@ import java.util.UUID;
 public class RosterService {
     private final RosterRepository rosterRepository;
     private final PersonService personService;
+    private final CampaignService campaignService;
 
-    public RosterService(RosterRepository rosterRepository, PersonService personService) {
+    public RosterService(RosterRepository rosterRepository, PersonService personService, CampaignService campaignService) {
         this.personService = personService;
         this.rosterRepository = rosterRepository;
+        this.campaignService = campaignService;
     }
 
     public Optional<RosterModel> getRosterById(String email, Integer id) {
@@ -43,6 +47,19 @@ public class RosterService {
             return Set.of();
         } catch (Exception e) {
             throw new RuntimeException("Failed to get all rosters for user: " + e.getMessage());
+        }
+    }
+
+    public Optional<List<RosterModel>> getAllCampaignRosters(String email, UUID campaignId) {
+        try {
+            Optional<PersonModel> user = personService.getActivePersonByEmail(email);
+            Optional<CampaignModel> campaign = campaignService.getCampaignById(campaignId);
+            if (user.isPresent() && campaign.isPresent()) {
+                return rosterRepository.getAllRostersByCampaignId(campaignId);
+            }
+            return Optional.empty();
+        } catch(Exception e) {
+            throw new RuntimeException("Failed to get all rosters for campaign: " + e.getMessage());
         }
     }
 

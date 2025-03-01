@@ -1,6 +1,5 @@
 package com.emberstone.emberstone_tavern.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,15 +10,14 @@ import java.util.UUID;
 @Table(name="roster")
 public class RosterModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @OneToOne()
     @JoinColumn(name = "player_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel player;
 
     @Column(name = "player_id")
-    @JsonIgnore
     private UUID playerId;
 
     @Column(name = "campaign_id")
@@ -43,9 +41,15 @@ public class RosterModel {
     @JoinColumn(name = "grand_alliance_id", referencedColumnName = "id", insertable = false, updatable = false)
     private GrandAllianceModel grandAlliance;
 
+    @Column(name = "grand_alliance_id")
+    private Integer grandAllianceId;
+
     @OneToOne()
     @JoinColumn(name = "faction_id", referencedColumnName = "id", insertable = false, updatable = false)
     private FactionModel faction;
+
+    @Column(name = "faction_id")
+    private Integer factionId;
 
     @OneToOne()
     @JoinColumn(name = "ror_id", referencedColumnName = "id", insertable = false, updatable = false)
