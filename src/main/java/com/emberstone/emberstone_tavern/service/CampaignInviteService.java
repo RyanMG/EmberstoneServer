@@ -5,6 +5,7 @@ import com.emberstone.emberstone_tavern.dto.MemberDTO;
 import com.emberstone.emberstone_tavern.model.*;
 import com.emberstone.emberstone_tavern.repository.CampaignInviteRepository;
 import com.emberstone.emberstone_tavern.repository.CampaignRepository;
+import com.emberstone.emberstone_tavern.util.CampaignUtils;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -20,17 +21,20 @@ public class CampaignInviteService {
     private final CampaignInviteRepository campaignInviteRepository;
     private final PersonService personService;
     private final CampaignService campaignService;
+    private final CampaignUtils campaignUtils;
 
     public CampaignInviteService(
             CampaignRepository campaignRepository,
             CampaignInviteRepository campaignInviteRepository,
             PersonService personService,
-            CampaignService campaignService
+            CampaignService campaignService,
+            CampaignUtils campaignUtils
     ) {
         this.campaignRepository = campaignRepository;
         this.campaignInviteRepository = campaignInviteRepository;
         this.personService = personService;
         this.campaignService = campaignService;
+        this.campaignUtils = campaignUtils;
     }
     /**
      * Invite a member to a campaign by their email address
@@ -42,7 +46,7 @@ public class CampaignInviteService {
 
             if (campaign.isPresent() && owner.isPresent()) {
                 Optional<PersonModel> invitee = personService.getActivePersonByEmail(inviteeEmail);
-                if (invitee.isPresent()) {
+                if (invitee.isPresent() && !campaignUtils.userIsInCampaign(invitee.get().getId(), campaign.get())) {
                     CampaignPersonInvite invite = new CampaignPersonInvite();
                     invite.setCampaignId(campaign.get().getId());
                     invite.setPlayerId(invitee.get().getId());
