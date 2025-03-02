@@ -1,6 +1,6 @@
 package com.emberstone.emberstone_tavern.repository;
 
-import com.emberstone.emberstone_tavern.model.RosterModel;
+import com.emberstone.emberstone_tavern.model.roster.RosterModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +13,9 @@ import java.util.UUID;
 
 @Repository
 public interface RosterRepository extends JpaRepository<RosterModel, Integer> {
+    @Query("SELECT r FROM RosterModel r WHERE r.id = :rosterId")
+    Optional<RosterModel> findByRosterId(@Param("rosterId") UUID rosterId);
+
     @Query("SELECT r FROM RosterModel r WHERE r.playerId = :playerId")
     Set<RosterModel> getAllByPlayerId(@Param("playerId") UUID playerId);
 

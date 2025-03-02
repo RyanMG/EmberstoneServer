@@ -1,8 +1,7 @@
 package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
-import com.emberstone.emberstone_tavern.model.PersonModel;
-import com.emberstone.emberstone_tavern.model.UserModel;
+import com.emberstone.emberstone_tavern.dto.UserDTO;
 import com.emberstone.emberstone_tavern.service.PersonService;
 import com.emberstone.emberstone_tavern.service.TokenService;
 import org.slf4j.Logger;
@@ -24,12 +23,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public HttpResponseModel<String> getActivePersonByEmail(@RequestBody UserModel userDetails) {
+    public HttpResponseModel<String> getActivePersonByEmail(@RequestBody UserDTO userDetails) {
         return personService.registerNewPerson(userDetails);
     }
 
     @PostMapping("/login")
-    public HttpResponseModel<String> login(@RequestBody UserModel userDetails) {
+    public HttpResponseModel<String> login(@RequestBody UserDTO userDetails) {
         return tokenService.generateToken(userDetails);
     }
 }

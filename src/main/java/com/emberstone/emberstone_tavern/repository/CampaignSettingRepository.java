@@ -1,6 +1,6 @@
 package com.emberstone.emberstone_tavern.repository;
 
-import com.emberstone.emberstone_tavern.model.CampaignSettingModel;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignSettingModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

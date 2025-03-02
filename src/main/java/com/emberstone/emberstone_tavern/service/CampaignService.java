@@ -1,14 +1,19 @@
 package com.emberstone.emberstone_tavern.service;
 
 import com.emberstone.emberstone_tavern.model.*;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
+import com.emberstone.emberstone_tavern.dto.CampaignOverviewDTO;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignPersonJoinModel;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignSettingModel;
+import com.emberstone.emberstone_tavern.model.roster.RosterModel;
 import com.emberstone.emberstone_tavern.repository.*;
 import com.emberstone.emberstone_tavern.util.CampaignUtils;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import java.net.http.HttpResponse;
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CampaignService {
@@ -18,29 +23,32 @@ public class CampaignService {
     private final CampaignPersonJoinRepository campaignPersonJoinRepository;
     private final CampaignSettingRepository campaignSettingRepository;
     private final CampaignUtils campaignUtils;
+    private final RosterService rosterService;
 
     public CampaignService(
             PersonService personService,
             CampaignRepository campaignRepository,
             CampaignPersonJoinRepository campaignPersonJoinRepository,
             CampaignSettingRepository campaignSettingRepository,
-            CampaignUtils campaignUtils
-    ) {
+            CampaignUtils campaignUtils,
+            RosterService rosterService) {
         this.personService = personService;
         this.campaignRepository = campaignRepository;
         this.campaignPersonJoinRepository = campaignPersonJoinRepository;
         this.campaignSettingRepository = campaignSettingRepository;
         this.campaignUtils = campaignUtils;
+        this.rosterService = rosterService;
     }
 
     /**
      * Gets all campaigns for a user which are currently active
      */
-    public Set<CampaignOverviewModel> getActiveCampaignsForUser(String email) {
+    public Set<CampaignOverviewDTO> getActiveCampaignsForUser(String email) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
-                return campaignRepository.getAllActiveCampaignsForUser(user.get().getId());
+                Set<CampaignModel> campaignSet = campaignRepository.getAllActiveCampaignsForUser(user.get().getId());
+                return getCampaignOverviewDTOS(campaignSet);
             }
             return new HashSet<>();
 
@@ -51,11 +59,12 @@ public class CampaignService {
     /**
      * Gets all campaigns for a user which are currently marked as complete
      */
-    public Set<CampaignOverviewModel> getCompletedCampaignsForUser(String email) {
+    public Set<CampaignOverviewDTO> getCompletedCampaignsForUser(String email) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
-                return campaignRepository.getAllCompletedCampaignsForUser(user.get().getId());
+                Set<CampaignModel> campaignSet = campaignRepository.getAllCompletedCampaignsForUser(user.get().getId());
+                return getCampaignOverviewDTOS(campaignSet);
             }
             return new HashSet<>();
 
@@ -63,12 +72,34 @@ public class CampaignService {
             throw new RuntimeException("Failed to get completed campaigns for user: " + e.getMessage());
         }
     }
+
+    private Set<CampaignOverviewDTO> getCampaignOverviewDTOS(Set<CampaignModel> campaignSet) {
+        return campaignSet.stream().map(campaign -> {
+            CampaignOverviewDTO campaignOverview = new CampaignOverviewDTO();
+            campaignOverview.setId(campaign.getId());
+            campaignOverview.setTitle(campaign.getTitle());
+            campaignOverview.setDescription(campaign.getDescription());
+            campaignOverview.setIconLink(campaign.getIconLink());
+            campaignOverview.setOwnerId(campaign.getOwnerId());
+            campaignOverview.setCampaignStatus(campaign.getCampaignStatus());
+            return campaignOverview;
+        }).collect(Collectors.toSet());
+    }
+
     /**
      * Gets a campaign by ID
      */
     public Optional<CampaignModel> getCampaignById(UUID id) {
         try {
-            return campaignRepository.findById(id);
+            Optional<CampaignModel> campaign = campaignRepository.findById(id);
+            campaign.ifPresent(campaignModel -> campaignModel.getMembers().forEach(member -> {
+                Optional<RosterModel> userRoster = rosterService.getUserCampaignRoster(member.getEmail(), campaignModel.getId());
+                member.setRoster(userRoster.orElse(null));
+            }));
+
+            Optional<RosterModel> ownerRoster = rosterService.getUserCampaignRoster(campaign.get().getOwner().getEmail(), campaign.get().getId());
+            campaign.get().getOwner().setRoster(ownerRoster.orElse(null));
+            return campaign;
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to get campaign by ID: " + e.getMessage());
@@ -84,6 +115,12 @@ public class CampaignService {
                 Optional<CampaignModel> campaign = campaignRepository.findById(id);
                 if (campaign.isPresent()) {
                     if (campaignUtils.userIsInCampaign(user.get().getId(), campaign.get())) {
+                        campaign.get().getMembers().forEach(member -> {
+                            Optional<RosterModel> userRoster = rosterService.getUserCampaignRoster(member.getEmail(), campaign.get().getId());
+                            member.setRoster(userRoster.orElse(null));
+                        });
+                        Optional<RosterModel> ownerRoster = rosterService.getUserCampaignRoster(campaign.get().getOwner().getEmail(), campaign.get().getId());
+                        campaign.get().getOwner().setRoster(ownerRoster.orElse(null));
                         return campaign;
                     }
                 }
@@ -134,6 +171,8 @@ public class CampaignService {
                 } while (campaignRepository.existsByCampaignCode(campaign.getCampaignCode()));
 
                 CampaignModel newCampaign = campaignRepository.save(campaign);
+                newCampaign.setOwner(user.get());
+                newCampaign.setMembers(new HashSet<>());
                 return Optional.of(newCampaign);
             }
 

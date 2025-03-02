@@ -1,5 +1,6 @@
-package com.emberstone.emberstone_tavern.model;
+package com.emberstone.emberstone_tavern.model.campaign;
 
+import com.emberstone.emberstone_tavern.model.PersonModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;

@@ -1,6 +1,9 @@
 package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.model.*;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
+import com.emberstone.emberstone_tavern.dto.CampaignOverviewDTO;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignSettingModel;
 import com.emberstone.emberstone_tavern.service.CampaignInviteService;
 import com.emberstone.emberstone_tavern.service.CampaignService;
 import org.springframework.security.core.Authentication;
@@ -24,12 +27,12 @@ public class CampaignController {
     }
 
     @GetMapping("/active")
-    public Set<CampaignOverviewModel> getActiveCampaignsForUser(Authentication authentication) {
+    public Set<CampaignOverviewDTO> getActiveCampaignsForUser(Authentication authentication) {
         return campaignService.getActiveCampaignsForUser(authentication.getName());
     }
 
     @GetMapping("/completed")
-    public Set<CampaignOverviewModel> getCompletedCampaignsForUser(Authentication authentication) {
+    public Set<CampaignOverviewDTO> getCompletedCampaignsForUser(Authentication authentication) {
         return campaignService.getCompletedCampaignsForUser(authentication.getName());
     }
 

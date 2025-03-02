@@ -1,6 +1,6 @@
 package com.emberstone.emberstone_tavern.util;
 
-import com.emberstone.emberstone_tavern.model.CampaignModel;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
 import org.springframework.stereotype.Component;
 

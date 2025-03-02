@@ -1,12 +1,13 @@
-package com.emberstone.emberstone_tavern.model;
+package com.emberstone.emberstone_tavern.model.roster;
 
+import com.emberstone.emberstone_tavern.model.GrandAllianceModel;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name="regiment_of_renown")
-public class RegimentOfRenown {
+public class RegimentOfRenownModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

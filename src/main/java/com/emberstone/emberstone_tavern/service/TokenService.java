@@ -2,7 +2,7 @@ package com.emberstone.emberstone_tavern.service;
 
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
-import com.emberstone.emberstone_tavern.model.UserModel;
+import com.emberstone.emberstone_tavern.dto.UserDTO;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -27,7 +27,7 @@ public class TokenService {
         this.personService = personService;
     }
 
-    public HttpResponseModel<String> generateToken(UserModel userDetails) {
+    public HttpResponseModel<String> generateToken(UserDTO userDetails) {
         Optional<PersonModel> persistedUser = personService.getActivePersonByEmail(userDetails.getEmail());
         if (persistedUser.isPresent()) {
             PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();

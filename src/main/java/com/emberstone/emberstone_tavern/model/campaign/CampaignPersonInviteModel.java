@@ -1,5 +1,7 @@
-package com.emberstone.emberstone_tavern.model;
+package com.emberstone.emberstone_tavern.model.campaign;
 
+import com.emberstone.emberstone_tavern.dto.CampaignOverviewDTO;
+import com.emberstone.emberstone_tavern.model.PersonModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,7 +12,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name="campaign_person_invite")
-public class CampaignPersonInvite {
+public class CampaignPersonInviteModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -31,9 +33,8 @@ public class CampaignPersonInvite {
     @JsonIgnore
     private UUID playerId;
 
-    @OneToOne()
-    @JoinColumn(name = "campaign_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private CampaignOverviewModel campaignOverview;
+    @Transient
+    private CampaignOverviewDTO campaignOverview;
 
     @Column(name = "campaign_id")
     @JsonIgnore

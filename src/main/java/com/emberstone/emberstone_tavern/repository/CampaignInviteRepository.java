@@ -1,6 +1,6 @@
 package com.emberstone.emberstone_tavern.repository;
 
-import com.emberstone.emberstone_tavern.model.CampaignPersonInvite;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignPersonInviteModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,9 +11,9 @@ import java.util.UUID;
 
 
 @Repository
-public interface CampaignInviteRepository extends JpaRepository<CampaignPersonInvite, Integer> {
+public interface CampaignInviteRepository extends JpaRepository<CampaignPersonInviteModel, Integer> {
 
-    @Query("SELECT cpi FROM CampaignPersonInvite cpi WHERE cpi.playerId = :playerId")
-    List<CampaignPersonInvite> getInvitesForPerson(@Param("playerId") UUID playerId);
+    @Query("SELECT cpi FROM CampaignPersonInviteModel cpi WHERE cpi.playerId = :playerId")
+    List<CampaignPersonInviteModel> getInvitesForPerson(@Param("playerId") UUID playerId);
 
 }

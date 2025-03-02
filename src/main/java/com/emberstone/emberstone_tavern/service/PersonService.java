@@ -4,7 +4,7 @@ import com.emberstone.emberstone_tavern.controllers.AuthController;
 import com.emberstone.emberstone_tavern.dto.MemberDTO;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
-import com.emberstone.emberstone_tavern.model.UserModel;
+import com.emberstone.emberstone_tavern.dto.UserDTO;
 import com.emberstone.emberstone_tavern.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    private Boolean validatePersonData(UserModel userModel) {
+    private Boolean validatePersonData(UserDTO userModel) {
         String email = userModel.getEmail();
         String password = userModel.getPassword();
         String firstName = userModel.getFirstName();
@@ -38,7 +38,7 @@ public class PersonService {
     /**
      * Register a new person
      */
-    public HttpResponseModel<String> registerNewPerson(UserModel userModel) {
+    public HttpResponseModel<String> registerNewPerson(UserDTO userModel) {
         try {
             Boolean isValidUser = validatePersonData(userModel);
 

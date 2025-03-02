@@ -1,11 +1,9 @@
 package com.emberstone.emberstone_tavern.service;
 
-import com.emberstone.emberstone_tavern.model.CampaignModel;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
-import com.emberstone.emberstone_tavern.model.RosterModel;
+import com.emberstone.emberstone_tavern.model.roster.RosterModel;
 import com.emberstone.emberstone_tavern.repository.RosterRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,19 +15,17 @@ import java.util.UUID;
 public class RosterService {
     private final RosterRepository rosterRepository;
     private final PersonService personService;
-    private final CampaignService campaignService;
 
-    public RosterService(RosterRepository rosterRepository, PersonService personService, CampaignService campaignService) {
+    public RosterService(RosterRepository rosterRepository, PersonService personService) {
         this.personService = personService;
         this.rosterRepository = rosterRepository;
-        this.campaignService = campaignService;
     }
 
-    public Optional<RosterModel> getRosterById(String email, Integer id) {
+    public Optional<RosterModel> getRosterById(String email, UUID id) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
-                return rosterRepository.findById(id);
+                return rosterRepository.findByRosterId(id);
             }
             return Optional.empty();
 
@@ -53,8 +49,7 @@ public class RosterService {
     public Optional<List<RosterModel>> getAllCampaignRosters(String email, UUID campaignId) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
-            Optional<CampaignModel> campaign = campaignService.getCampaignById(campaignId);
-            if (user.isPresent() && campaign.isPresent()) {
+            if (user.isPresent()) {
                 return rosterRepository.getAllRostersByCampaignId(campaignId);
             }
             return Optional.empty();

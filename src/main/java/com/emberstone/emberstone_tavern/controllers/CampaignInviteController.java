@@ -2,7 +2,6 @@ package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.dto.CampaignInviteDTO;
 import com.emberstone.emberstone_tavern.dto.EmailDTO;
-import com.emberstone.emberstone_tavern.model.CampaignPersonInvite;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.service.CampaignInviteService;
 import org.springframework.security.core.Authentication;

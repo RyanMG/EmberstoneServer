@@ -1,9 +1,7 @@
-package com.emberstone.emberstone_tavern.model;
+package com.emberstone.emberstone_tavern.model.campaign;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 @Entity

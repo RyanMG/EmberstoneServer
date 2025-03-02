@@ -3,6 +3,8 @@ package com.emberstone.emberstone_tavern.service;
 import com.emberstone.emberstone_tavern.dto.CampaignInviteDTO;
 import com.emberstone.emberstone_tavern.dto.MemberDTO;
 import com.emberstone.emberstone_tavern.model.*;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignPersonInviteModel;
 import com.emberstone.emberstone_tavern.repository.CampaignInviteRepository;
 import com.emberstone.emberstone_tavern.repository.CampaignRepository;
 import com.emberstone.emberstone_tavern.util.CampaignUtils;
@@ -47,7 +49,7 @@ public class CampaignInviteService {
             if (campaign.isPresent() && owner.isPresent()) {
                 Optional<PersonModel> invitee = personService.getActivePersonByEmail(inviteeEmail);
                 if (invitee.isPresent() && !campaignUtils.userIsInCampaign(invitee.get().getId(), campaign.get())) {
-                    CampaignPersonInvite invite = new CampaignPersonInvite();
+                    CampaignPersonInviteModel invite = new CampaignPersonInviteModel();
                     invite.setCampaignId(campaign.get().getId());
                     invite.setPlayerId(invitee.get().getId());
                     invite.setOwnerId(owner.get().getId());
@@ -72,7 +74,7 @@ public class CampaignInviteService {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
-                List<CampaignPersonInvite> invites = campaignInviteRepository.getInvitesForPerson(user.get().getId());
+                List<CampaignPersonInviteModel> invites = campaignInviteRepository.getInvitesForPerson(user.get().getId());
                 return invites.stream().map(invite -> {
                     CampaignInviteDTO inviteDTO = new CampaignInviteDTO();
 
@@ -126,7 +128,7 @@ public class CampaignInviteService {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
-                Optional<CampaignPersonInvite> invite = campaignInviteRepository.findById(inviteId);
+                Optional<CampaignPersonInviteModel> invite = campaignInviteRepository.findById(inviteId);
                 if (invite.isPresent()) {
                     Optional<CampaignModel> campaign = campaignService.getCampaignById(invite.get().getCampaignId());
                     if (campaign.isPresent()) {

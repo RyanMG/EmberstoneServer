@@ -1,7 +1,7 @@
 package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
-import com.emberstone.emberstone_tavern.model.RosterModel;
+import com.emberstone.emberstone_tavern.model.roster.RosterModel;
 import com.emberstone.emberstone_tavern.service.RosterService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
@@ -25,7 +25,7 @@ public class RosterController {
     }
 
     @GetMapping("/{id}")
-    public Optional<RosterModel> getRosterById(Authentication authentication, @PathVariable Integer id) {
+    public Optional<RosterModel> getRosterById(Authentication authentication, @PathVariable UUID id) {
         return rosterService.getRosterById(authentication.getName(), id);
     }
 

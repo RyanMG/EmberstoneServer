@@ -1,5 +1,6 @@
 package com.emberstone.emberstone_tavern.model;
 
+import com.emberstone.emberstone_tavern.model.roster.RosterModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -40,4 +41,7 @@ public class PersonModel {
     @Column(name = "account_status")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private AccountStatus accountStatus;
+
+    @Transient
+    private RosterModel roster;
 }

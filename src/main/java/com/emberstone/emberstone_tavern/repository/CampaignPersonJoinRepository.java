@@ -1,6 +1,6 @@
 package com.emberstone.emberstone_tavern.repository;
 
-import com.emberstone.emberstone_tavern.model.CampaignPersonJoinModel;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignPersonJoinModel;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

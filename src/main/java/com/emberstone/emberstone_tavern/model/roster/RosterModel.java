@@ -1,8 +1,12 @@
-package com.emberstone.emberstone_tavern.model;
+package com.emberstone.emberstone_tavern.model.roster;
 
+import com.emberstone.emberstone_tavern.model.FactionModel;
+import com.emberstone.emberstone_tavern.model.GrandAllianceModel;
+import com.emberstone.emberstone_tavern.model.PersonModel;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -13,6 +17,7 @@ public class RosterModel {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Transient
     @OneToOne()
     @JoinColumn(name = "player_id", referencedColumnName = "id", insertable = false, updatable = false)
     private PersonModel player;
@@ -53,5 +58,11 @@ public class RosterModel {
 
     @OneToOne()
     @JoinColumn(name = "ror_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private RegimentOfRenown regimentOfRenown;
+    private RegimentOfRenownModel regimentOfRenown;
+
+    @Column(name = "ror_id")
+    private Integer rorId;
+
+    @Transient
+    private Set<RegimentModel> regiments;
 }
