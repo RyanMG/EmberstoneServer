@@ -33,6 +33,14 @@ public class RosterModel {
     @Column(name = "point_total")
     private Integer pointTotal;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(name = "roster_general",
+            joinColumns =
+                    { @JoinColumn(name = "roster_id", referencedColumnName = "id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "general_id", referencedColumnName = "id") })
+    private UnitModel general;
+
     @Column(name = "has_faction_terrain")
     private boolean hasFactionTerrain;
 
@@ -63,6 +71,6 @@ public class RosterModel {
     @Column(name = "ror_id")
     private Integer rorId;
 
-    @Transient
+    @OneToMany(mappedBy = "rosterId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RegimentModel> regiments;
 }

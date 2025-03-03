@@ -5,8 +5,8 @@ import com.emberstone.emberstone_tavern.dto.MemberDTO;
 import com.emberstone.emberstone_tavern.model.*;
 import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
 import com.emberstone.emberstone_tavern.model.campaign.CampaignPersonInviteModel;
-import com.emberstone.emberstone_tavern.repository.CampaignInviteRepository;
-import com.emberstone.emberstone_tavern.repository.CampaignRepository;
+import com.emberstone.emberstone_tavern.repository.campaign.CampaignInviteRepository;
+import com.emberstone.emberstone_tavern.repository.campaign.CampaignRepository;
 import com.emberstone.emberstone_tavern.util.CampaignUtils;
 import org.springframework.stereotype.Service;
 

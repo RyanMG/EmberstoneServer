@@ -4,6 +4,7 @@ import com.emberstone.emberstone_tavern.model.emberstone_weapon.EmberstoneWeapon
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -31,6 +32,13 @@ public class UnitModel {
 
     @Column(name = "unit_name")
     private String unitName;
+
+    @OneToOne
+    @JoinColumn(name = "unit_type_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private UnitTypeModel unitType;
+
+    @Column(name = "unit_type_id")
+    private Integer unitTypeId;
 
     @Column(name = "path_id")
     private Integer pathId;

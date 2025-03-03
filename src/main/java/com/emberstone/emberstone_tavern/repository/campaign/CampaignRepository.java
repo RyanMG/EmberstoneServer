@@ -1,7 +1,6 @@
-package com.emberstone.emberstone_tavern.repository;
+package com.emberstone.emberstone_tavern.repository.campaign;
 
 import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
-import com.emberstone.emberstone_tavern.dto.CampaignOverviewDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

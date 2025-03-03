@@ -1,6 +1,7 @@
 package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
+import com.emberstone.emberstone_tavern.model.path.PathModel;
 import com.emberstone.emberstone_tavern.model.roster.RosterModel;
 import com.emberstone.emberstone_tavern.service.RosterService;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class RosterController {
     @GetMapping("/{id}")
     public Optional<RosterModel> getRosterById(Authentication authentication, @PathVariable UUID id) {
         return rosterService.getRosterById(authentication.getName(), id);
+    }
+
+    @DeleteMapping("/{id}")
+    public HttpResponseModel<UUID> deleteRoster(Authentication authentication, @PathVariable UUID id) {
+        return rosterService.deleteRoster(authentication.getName(), id);
     }
 
     @GetMapping("/campaign/{campaignId}")
