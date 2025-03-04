@@ -33,6 +33,9 @@ public class UnitModel {
     @Column(name = "unit_name")
     private String unitName;
 
+    @Column(name = "warscroll_name")
+    private String warscrollName;
+
     @OneToOne
     @JoinColumn(name = "unit_type_id", referencedColumnName = "id", insertable = false, updatable = false)
     private UnitTypeModel unitType;
@@ -53,5 +56,5 @@ public class UnitModel {
     private Integer battleWounds;
 
     @Column(name = "is_reinforced")
-    private Integer isReinforced;
+    private boolean isReinforced;
 }
