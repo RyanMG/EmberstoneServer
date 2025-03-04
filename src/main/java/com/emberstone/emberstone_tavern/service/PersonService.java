@@ -61,11 +61,11 @@ public class PersonService {
                 return HttpResponseModel.success("User created", null);
             }
 
-            return HttpResponseModel.error("Invalid user data");
+            return HttpResponseModel.error("Invalid user data", null);
 
         } catch (Exception err) {
             log.error(err.getMessage());
-            return HttpResponseModel.error("Error registering new person");
+            return HttpResponseModel.error("Error registering new person", null);
         }
     }
 

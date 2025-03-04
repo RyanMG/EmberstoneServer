@@ -49,6 +49,6 @@ public class TokenService {
                 return HttpResponseModel.success("Login success", token);
             }
         }
-        return HttpResponseModel.error("Invalid username or password");
+        return HttpResponseModel.error("Invalid username or password", null);
     }
 }

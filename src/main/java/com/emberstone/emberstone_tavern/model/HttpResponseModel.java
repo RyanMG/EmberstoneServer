@@ -24,10 +24,10 @@ public class HttpResponseModel<T> {
                 .build();
     }
 
-    public static <T> HttpResponseModel<T> error(String message) {
+    public static <T> HttpResponseModel<T> error(String message, T data) {
         return HttpResponseModel.<T>builder()
                 .message(message)
-                .data(null)
+                .data(data)
                 .success(false)
                 .build();
     }

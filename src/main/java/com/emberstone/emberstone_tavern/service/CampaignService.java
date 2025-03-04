@@ -149,7 +149,7 @@ public class CampaignService {
 
             }
 
-            return HttpResponseModel.error("User was not deleted");
+            return HttpResponseModel.error("User was not deleted", null);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove user from campaign: " + e.getMessage());
@@ -224,9 +224,9 @@ public class CampaignService {
                     return HttpResponseModel.success("Campaign was deleted", campaignId);
                 }
             }
-            return HttpResponseModel.error("Error deleting campaign");
+            return HttpResponseModel.error("Error deleting campaign", null);
         } catch (Exception e) {
-            return HttpResponseModel.error("Error deleting campaign: " + e.getMessage());
+            return HttpResponseModel.error("Error deleting campaign: " + e.getMessage(), null);
         }
     }
     /**
@@ -246,7 +246,7 @@ public class CampaignService {
             return HttpResponseModel.success("User added to campaign", campaign.getId().toString());
 
         } catch (Error e) {
-            return HttpResponseModel.error("User was not added to the campaign");
+            return HttpResponseModel.error("User was not added to the campaign", null);
         }
     }
     /**

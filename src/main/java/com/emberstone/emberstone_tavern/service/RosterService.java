@@ -3,8 +3,11 @@ package com.emberstone.emberstone_tavern.service;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
 import com.emberstone.emberstone_tavern.model.roster.RegimentModel;
+import com.emberstone.emberstone_tavern.model.roster.RosterGeneralModel;
 import com.emberstone.emberstone_tavern.model.roster.RosterModel;
+import com.emberstone.emberstone_tavern.model.roster.UnitModel;
 import com.emberstone.emberstone_tavern.repository.rosters.RegimentRepository;
+import com.emberstone.emberstone_tavern.repository.rosters.RosterGeneralRepository;
 import com.emberstone.emberstone_tavern.repository.rosters.RosterRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +18,18 @@ public class RosterService {
     private final RosterRepository rosterRepository;
     private final RegimentRepository regimentRepository;
     private final PersonService personService;
+    private final RosterGeneralRepository rosterGeneralRepository;
 
     public RosterService(
             RosterRepository rosterRepository,
             PersonService personService,
-            RegimentRepository regimentRepository
+            RegimentRepository regimentRepository,
+            RosterGeneralRepository rosterGeneralRepository
     ) {
         this.personService = personService;
         this.rosterRepository = rosterRepository;
-        this.regimentRepository = regimentRepository;;
+        this.regimentRepository = regimentRepository;
+        this.rosterGeneralRepository = rosterGeneralRepository;
     }
 
     public Optional<RosterModel> getRosterById(String email, UUID id) {
@@ -89,7 +95,7 @@ public class RosterService {
                     return HttpResponseModel.success("Roster deleted", rosterToDelete.get().getId());
                 }
             }
-            return HttpResponseModel.error("Failed to delete roster");
+            return HttpResponseModel.error("Failed to delete roster", null);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete roster: " + e.getMessage());
@@ -111,7 +117,7 @@ public class RosterService {
                 return HttpResponseModel.success("Roster created successfully", savedRoster);
             }
 
-            return HttpResponseModel.error("No user found to create roster under");
+            return HttpResponseModel.error("No user found to create roster under", null);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to create new campaign roster: " + e.getMessage());
@@ -132,10 +138,49 @@ public class RosterService {
                  return HttpResponseModel.success("Roster created successfully", savedRoster);
             }
 
-            return HttpResponseModel.error("Unable to edit roster");
+            return HttpResponseModel.error("Unable to edit roster", null);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to create new campaign roster: " + e.getMessage());
+        }
+    }
+
+    public Optional<RosterGeneralModel> getRosterGeneralJoin(UUID rosterId) {
+        try {
+            return rosterGeneralRepository.getByRosterId(rosterId);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get current roster general: " + e.getMessage());
+        }
+    }
+
+    public RosterGeneralModel addGeneralToRoster(UUID rosterId, Integer generalId) {
+        try {
+            RosterGeneralModel newRosterGeneral = new RosterGeneralModel();
+            newRosterGeneral.setRosterId(rosterId);
+            newRosterGeneral.setGeneralId(generalId);
+
+            rosterGeneralRepository.save(newRosterGeneral);
+            return newRosterGeneral;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get current roster general: " + e.getMessage());
+        }
+    }
+
+    public Optional<RosterGeneralModel> updateRosterGeneral(UUID rosterId, Integer generalId) {
+        try {
+            Optional<RosterGeneralModel> currentRoster = rosterGeneralRepository.getByRosterId(rosterId);
+            if (currentRoster.isPresent()) {
+                currentRoster.get().setGeneralId(generalId);
+                rosterGeneralRepository.save(currentRoster.get());
+                return currentRoster;
+            }
+
+            return currentRoster;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get current roster general: " + e.getMessage());
         }
     }
 }

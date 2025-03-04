@@ -58,13 +58,13 @@ public class CampaignInviteService {
                     campaignInviteRepository.save(invite);
                     return HttpResponseModel.success("Invite sent", null);
                 }
-                return HttpResponseModel.error("No player registered with that email.");
+                return HttpResponseModel.error("No player registered with that email.", null);
             }
 
-            return HttpResponseModel.error("No matching campaign found");
+            return HttpResponseModel.error("No matching campaign found", null);
 
         } catch (Exception e) {
-            return HttpResponseModel.error("User was not added to the campaign");
+            return HttpResponseModel.error("User was not added to the campaign", null);
         }
     }
     /**
@@ -110,15 +110,15 @@ public class CampaignInviteService {
             if (user.isPresent()) {
                 CampaignModel campaign = campaignRepository.getByCampaignCode(campaignCode);
                 if (campaign == null) {
-                    return HttpResponseModel.error("No campaign found for this code");
+                    return HttpResponseModel.error("No campaign found for this code", null);
                 }
 
                 return campaignService.addUserToCampaign(user.get(), campaign);
             }
-            return HttpResponseModel.error("No matching user found.");
+            return HttpResponseModel.error("No matching user found.", null);
 
         } catch (Exception e) {
-            return HttpResponseModel.error("User was not added to the campaign");
+            return HttpResponseModel.error("User was not added to the campaign", null);
         }
     }
     /**
@@ -139,10 +139,10 @@ public class CampaignInviteService {
                 }
             }
 
-            return HttpResponseModel.error("Failed to accept campaign invite.");
+            return HttpResponseModel.error("Failed to accept campaign invite.", null);
 
         } catch (Error e) {
-            return HttpResponseModel.error("Failed to accept campaign invite");
+            return HttpResponseModel.error("Failed to accept campaign invite", null);
         }
     }
     /**

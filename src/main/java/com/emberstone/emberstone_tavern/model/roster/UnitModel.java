@@ -19,10 +19,10 @@ public class UnitModel {
     private Integer regimentId;
 
     @Column(name = "is_general")
-    private boolean isGeneral;
+    private Boolean isGeneral;
 
     @Column(name = "is_hero")
-    private boolean isHero;
+    private Boolean isHero;
 
     @Transient
     private EmberstoneWeaponModel emberstoneWeapon;
@@ -56,5 +56,5 @@ public class UnitModel {
     private Integer battleWounds;
 
     @Column(name = "is_reinforced")
-    private boolean isReinforced;
+    private Boolean isReinforced;
 }

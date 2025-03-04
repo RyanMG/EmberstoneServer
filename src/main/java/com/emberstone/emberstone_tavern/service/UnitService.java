@@ -2,7 +2,9 @@ package com.emberstone.emberstone_tavern.service;
 
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
 import com.emberstone.emberstone_tavern.model.path.PathModel;
+import com.emberstone.emberstone_tavern.model.roster.RosterGeneralModel;
 import com.emberstone.emberstone_tavern.model.roster.RosterModel;
 import com.emberstone.emberstone_tavern.model.roster.UnitModel;
 import com.emberstone.emberstone_tavern.model.roster.UnitTypeModel;
@@ -24,32 +26,55 @@ public class UnitService {
     private final PathRepository pathRepository;
     private final PersonRepository personRepository;
     private final RosterRepository rosterRepository;
+    private final RosterService rosterService;
 
     public UnitService(
             UnitRepository unitRepository,
             UnitTypeRepository unitTypeRepository,
             PathRepository pathRepository,
             PersonRepository personRepository,
-            RosterRepository rosterRepository
-    ) {
+            RosterRepository rosterRepository,
+            RosterService rosterService) {
         this.unitRepository = unitRepository;
         this.unitTypeRepository = unitTypeRepository;
         this.pathRepository = pathRepository;
         this.personRepository = personRepository;
         this.rosterRepository = rosterRepository;
+        this.rosterService = rosterService;
     }
 
     public HttpResponseModel<UnitModel> createNewUnit(String email, UUID rosterId, UnitModel newUnit) {
         try {
             Optional<PersonModel> user = personRepository.findByEmail(email);
             Optional<RosterModel> activeRoster = rosterRepository.findById(rosterId);
-            if (user.isPresent() && activeRoster.isPresent()) {
-                if (activeRoster.get().getPlayerId().equals(user.get().getId())) {
-                    UnitModel savedUnit = unitRepository.save(newUnit);
-                    return HttpResponseModel.success("Unit saved successfully", savedUnit);
+
+            // Ensure the user making the request owns the roster being updated
+            if (user.isPresent() && activeRoster.isPresent() && activeRoster.get().getPlayerId().equals(user.get().getId())) {
+                if (newUnit.getIsGeneral()) {
+
+                    // Ensure there is not an existing general
+                    Optional<RosterGeneralModel> rosterGeneralJoin = rosterService.getRosterGeneralJoin(rosterId);
+                    if (rosterGeneralJoin.isPresent()) {
+                        Optional<UnitModel> general = unitRepository.findById(rosterGeneralJoin.get().getGeneralId());
+                        if (general.isPresent()) {
+                            return HttpResponseModel.error("There is an existing general present for this campaign", general.get());
+                        }
+
+                        UnitModel savedUnit = unitRepository.save(newUnit);
+                        rosterService.updateRosterGeneral(rosterId, savedUnit.getId());
+                        return HttpResponseModel.success("General saved successfully", savedUnit);
+
+                    } else {
+                        UnitModel savedUnit = unitRepository.save(newUnit);
+                        rosterService.addGeneralToRoster(rosterId, savedUnit.getId());
+                        return HttpResponseModel.success("General saved successfully", savedUnit);
+                    }
                 }
+
+                UnitModel savedUnit = unitRepository.save(newUnit);
+                return HttpResponseModel.success("Unit saved successfully", savedUnit);
             }
-            return HttpResponseModel.error("User not found");
+            return HttpResponseModel.error("User not found", null);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to create new unit: " + e.getMessage());
