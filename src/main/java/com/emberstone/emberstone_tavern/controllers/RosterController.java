@@ -40,8 +40,13 @@ public class RosterController {
         return rosterService.getAllCampaignRosters(authentication.getName(), campaignId);
     }
 
-    @PostMapping("/campaign/{campaignId}")
+    @PostMapping("")
     public HttpResponseModel<RosterModel> createUserCampaignRoster(Authentication authentication, @RequestBody RosterModel roster) {
         return rosterService.createUserCampaignRoster(authentication.getName(), roster);
+    }
+
+    @PutMapping("/{id}")
+    public HttpResponseModel<RosterModel> updateRoster(Authentication authentication, @PathVariable UUID id, @RequestBody RosterModel roster) {
+        return rosterService.updateRoster(authentication.getName(), id, roster);
     }
 }

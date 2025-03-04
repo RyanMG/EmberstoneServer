@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Repository
-public interface RosterRepository extends JpaRepository<RosterModel, Integer> {
+public interface RosterRepository extends JpaRepository<RosterModel, UUID> {
     @Query("SELECT r FROM RosterModel r WHERE r.id = :rosterId")
     Optional<RosterModel> findByRosterId(@Param("rosterId") UUID rosterId);
 

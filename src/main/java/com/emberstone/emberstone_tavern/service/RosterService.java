@@ -2,11 +2,9 @@ package com.emberstone.emberstone_tavern.service;
 
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.PersonModel;
-import com.emberstone.emberstone_tavern.model.path.PathModel;
 import com.emberstone.emberstone_tavern.model.roster.RegimentModel;
 import com.emberstone.emberstone_tavern.model.roster.RosterModel;
 import com.emberstone.emberstone_tavern.repository.rosters.RegimentRepository;
-import com.emberstone.emberstone_tavern.repository.units.PathRepository;
 import com.emberstone.emberstone_tavern.repository.rosters.RosterRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +13,17 @@ import java.util.*;
 @Service
 public class RosterService {
     private final RosterRepository rosterRepository;
-    private final PathRepository pathRepository;
     private final RegimentRepository regimentRepository;
     private final PersonService personService;
 
     public RosterService(
             RosterRepository rosterRepository,
             PersonService personService,
-            RegimentRepository regimentRepository,
-            PathRepository pathRepository
+            RegimentRepository regimentRepository
     ) {
         this.personService = personService;
         this.rosterRepository = rosterRepository;
-        this.regimentRepository = regimentRepository;
-        this.pathRepository = pathRepository;
+        this.regimentRepository = regimentRepository;;
     }
 
     public Optional<RosterModel> getRosterById(String email, UUID id) {
@@ -123,12 +118,24 @@ public class RosterService {
         }
     }
 
-    public List<PathModel> getPathsByUnitType(String email, boolean isHero, Integer unitTypeId) {
+    public HttpResponseModel<RosterModel> updateRoster(String email, UUID rosterId, RosterModel updatedRoster) {
         try {
-            return pathRepository.getPathsByUnitType(isHero, unitTypeId);
+            Optional<PersonModel> user = personService.getActivePersonByEmail(email);
+            Optional<RosterModel> currentRoster = rosterRepository.findById(rosterId);
+            if (user.isPresent() && currentRoster.isPresent() &&  currentRoster.get().getPlayerId().equals(user.get().getId())) {
+                 RosterModel currentRosterModel = currentRoster.get();
+                 currentRosterModel.setName(updatedRoster.getName());
+                 currentRosterModel.setGrandAllianceId(updatedRoster.getGrandAllianceId());
+                 currentRosterModel.setFactionId(updatedRoster.getFactionId());
+
+                 RosterModel savedRoster = rosterRepository.save(currentRosterModel);
+                 return HttpResponseModel.success("Roster created successfully", savedRoster);
+            }
+
+            return HttpResponseModel.error("Unable to edit roster");
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get unit path options: " + e.getMessage());
+            throw new RuntimeException("Failed to create new campaign roster: " + e.getMessage());
         }
     }
 }
