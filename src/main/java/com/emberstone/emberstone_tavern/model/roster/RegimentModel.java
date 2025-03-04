@@ -3,6 +3,7 @@ package com.emberstone.emberstone_tavern.model.roster;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,5 +31,6 @@ public class RegimentModel {
     private Boolean isAuxiliary;
 
     @Transient
-    private Set<UnitModel> units;
+    @OneToMany(mappedBy = "regimentId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UnitModel> units = new HashSet<>();
 }

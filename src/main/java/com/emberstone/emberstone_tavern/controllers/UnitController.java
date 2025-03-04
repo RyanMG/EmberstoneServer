@@ -32,7 +32,7 @@ public class UnitController {
     }
 
     @PostMapping("")
-    public HttpResponseModel<UnitModel> createNewUnit(Authentication authentication, @RequestParam UUID rosterId, @RequestBody UnitModel unitModel) {
-        return unitService.createNewUnit(authentication.getName(), rosterId, unitModel);
+    public HttpResponseModel<UnitModel> createNewUnit(Authentication authentication, @RequestParam UUID rosterId, @RequestParam Integer regimentId, @RequestBody UnitModel unitModel) {
+        return unitService.createNewUnit(authentication.getName(), rosterId, regimentId, unitModel);
     }
 }

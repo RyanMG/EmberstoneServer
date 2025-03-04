@@ -33,7 +33,7 @@ public class RosterModel {
     @Column(name = "point_total")
     private Integer pointTotal;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinTable(name = "roster_general",
             joinColumns =
                     { @JoinColumn(name = "roster_id", referencedColumnName = "id") },

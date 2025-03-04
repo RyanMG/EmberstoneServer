@@ -110,6 +110,9 @@ public class RosterService {
                 RegimentModel generalsRegiment = new RegimentModel();
                 generalsRegiment.setRosterId(savedRoster.getId());
                 generalsRegiment.setUnits(new HashSet<>());
+                generalsRegiment.setRegimentNumber(1);
+                generalsRegiment.setIsGeneral(true);
+                generalsRegiment.setIsAuxiliary(false);
 
                 RegimentModel campaignGeneralsRegiment = regimentRepository.save(generalsRegiment);
                 savedRoster.setRegiments(Set.of(campaignGeneralsRegiment));
@@ -154,30 +157,26 @@ public class RosterService {
         }
     }
 
-    public RosterGeneralModel addGeneralToRoster(UUID rosterId, Integer generalId) {
+    public void addGeneralToRoster(UUID rosterId, Integer generalId) {
         try {
             RosterGeneralModel newRosterGeneral = new RosterGeneralModel();
             newRosterGeneral.setRosterId(rosterId);
             newRosterGeneral.setGeneralId(generalId);
 
             rosterGeneralRepository.save(newRosterGeneral);
-            return newRosterGeneral;
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to get current roster general: " + e.getMessage());
         }
     }
 
-    public Optional<RosterGeneralModel> updateRosterGeneral(UUID rosterId, Integer generalId) {
+    public void updateRosterGeneral(UUID rosterId, Integer generalId) {
         try {
             Optional<RosterGeneralModel> currentRoster = rosterGeneralRepository.getByRosterId(rosterId);
             if (currentRoster.isPresent()) {
                 currentRoster.get().setGeneralId(generalId);
                 rosterGeneralRepository.save(currentRoster.get());
-                return currentRoster;
             }
-
-            return currentRoster;
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to get current roster general: " + e.getMessage());
