@@ -1,6 +1,7 @@
 package com.emberstone.emberstone_tavern.model.roster;
 
 import com.emberstone.emberstone_tavern.model.emberstone_weapon.EmberstoneWeaponModel;
+import com.emberstone.emberstone_tavern.model.path.PathModel;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -42,6 +43,10 @@ public class UnitModel {
 
     @Column(name = "unit_type_id")
     private Integer unitTypeId;
+
+    @OneToOne
+    @JoinColumn(name = "path_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private PathModel path;
 
     @Column(name = "path_id")
     private Integer pathId;

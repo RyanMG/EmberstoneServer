@@ -17,6 +17,18 @@ public class RegimentModel {
     @Column(name = "roster_id")
     private UUID rosterId;
 
+    @Column(name = "regiment_number")
+    private Integer regimentNumber;
+
+    @Column(name = "regiment_name")
+    private String regimentName;
+
+    @Column(name = "is_general")
+    private Boolean isGeneral;
+
+    @Column(name = "is_auxiliary")
+    private Boolean isAuxiliary;
+
     @Transient
     private Set<UnitModel> units;
 }
