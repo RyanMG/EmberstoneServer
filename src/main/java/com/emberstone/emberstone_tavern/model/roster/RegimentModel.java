@@ -30,7 +30,6 @@ public class RegimentModel {
     @Column(name = "is_auxiliary")
     private Boolean isAuxiliary;
 
-    @Transient
     @OneToMany(mappedBy = "regimentId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UnitModel> units = new HashSet<>();
 }
