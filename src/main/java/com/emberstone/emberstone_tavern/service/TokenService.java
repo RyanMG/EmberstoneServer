@@ -28,7 +28,7 @@ public class TokenService {
     }
 
     public HttpResponseModel<String> generateToken(UserDTO userDetails) {
-        Optional<PersonModel> persistedUser = personService.getActivePersonByEmail(userDetails.getEmail());
+        Optional<PersonModel> persistedUser = personService.getActivePersonByEmail(userDetails.getEmail().toLowerCase());
         if (persistedUser.isPresent()) {
             PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
             boolean validPassword = encoder.matches(userDetails.getPassword(), persistedUser.get().getPassword());

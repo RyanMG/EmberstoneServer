@@ -43,12 +43,12 @@ public class PersonService {
             Boolean isValidUser = validatePersonData(userModel);
 
             if (isValidUser) {
-                Optional<PersonModel> persistedPerson = personRepository.findByEmail(userModel.getEmail());
+                Optional<PersonModel> persistedPerson = personRepository.findByEmail(userModel.getEmail().toLowerCase());
                 if (persistedPerson.isPresent()) {
                     return HttpResponseModel.success("User already exists", null);
                 }
                 PersonModel newPerson = new PersonModel();
-                newPerson.setEmail(userModel.getEmail());
+                newPerson.setEmail(userModel.getEmail().toLowerCase());
                 newPerson.setFirstName(userModel.getFirstName());
                 newPerson.setLastName(userModel.getLastName());
 
