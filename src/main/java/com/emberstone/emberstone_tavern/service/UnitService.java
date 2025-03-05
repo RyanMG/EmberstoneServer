@@ -62,7 +62,6 @@ public class UnitService {
                 }
 
                 if (newUnit.getIsGeneral()) {
-
                     // Ensure there is not an existing general
                     Optional<RosterGeneralModel> rosterGeneralJoin = rosterService.getRosterGeneralJoin(rosterId);
                     if (rosterGeneralJoin.isPresent()) {
@@ -70,23 +69,20 @@ public class UnitService {
                         if (general.isPresent()) {
                             return HttpResponseModel.error("There is an existing general present for this campaign", general.get());
                         }
-
-                        UnitModel savedUnit = unitRepository.save(newUnit);
-                        rosterService.updateRosterGeneral(rosterId, savedUnit.getId());
-                        addUnitToRepository(savedUnit, addToRegiment.get());
-                        return HttpResponseModel.success("General saved successfully", savedUnit);
-
-                    } else {
-                        UnitModel savedUnit = unitRepository.save(newUnit);
-                        rosterService.addGeneralToRoster(rosterId, savedUnit.getId());
-                        addUnitToRepository(savedUnit, addToRegiment.get());
-                        return HttpResponseModel.success("General saved successfully", savedUnit);
                     }
                 }
 
-                UnitModel savedUnit = unitRepository.save(newUnit);
+                Integer rosterUnitCount = unitRepository.getCountOfUnitsInRegiment(regimentId);
+                newUnit.setUnitNumber(rosterUnitCount + 1);
+                UnitModel savedUnit = unitRepository.saveAndFlush(newUnit);
                 addUnitToRepository(savedUnit, addToRegiment.get());
-                return HttpResponseModel.success("Unit saved successfully", savedUnit);
+
+                if (newUnit.getIsGeneral()) {
+                    rosterService.updateOrCreateRosterGeneral(rosterId, savedUnit.getId());
+                }
+
+                Optional<UnitModel> responseUnit = unitRepository.findById(savedUnit.getId());
+                return HttpResponseModel.success("Unit saved successfully", responseUnit.orElse(null));
             }
             return HttpResponseModel.error("User not found", null);
 

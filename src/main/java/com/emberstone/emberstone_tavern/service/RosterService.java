@@ -151,25 +151,19 @@ public class RosterService {
         }
     }
 
-    public void addGeneralToRoster(UUID rosterId, Integer generalId) {
-        try {
-            RosterGeneralModel newRosterGeneral = new RosterGeneralModel();
-            newRosterGeneral.setRosterId(rosterId);
-            newRosterGeneral.setGeneralId(generalId);
-
-            rosterGeneralRepository.save(newRosterGeneral);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get current roster general: " + e.getMessage());
-        }
-    }
-
-    public void updateRosterGeneral(UUID rosterId, Integer generalId) {
+    public void updateOrCreateRosterGeneral(UUID rosterId, Integer generalId) {
         try {
             Optional<RosterGeneralModel> currentRoster = rosterGeneralRepository.getByRosterId(rosterId);
             if (currentRoster.isPresent()) {
                 currentRoster.get().setGeneralId(generalId);
                 rosterGeneralRepository.save(currentRoster.get());
+
+            } else {
+                RosterGeneralModel newRosterGeneral = new RosterGeneralModel();
+                newRosterGeneral.setRosterId(rosterId);
+                newRosterGeneral.setGeneralId(generalId);
+
+                rosterGeneralRepository.save(newRosterGeneral);
             }
 
         } catch (Exception e) {

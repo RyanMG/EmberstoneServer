@@ -16,6 +16,9 @@ public class UnitModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "unit_number")
+    private Integer unitNumber;
+
     @Column(name = "regiment_id")
     private Integer regimentId;
 
