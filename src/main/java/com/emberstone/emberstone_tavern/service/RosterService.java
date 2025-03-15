@@ -9,9 +9,12 @@ import com.emberstone.emberstone_tavern.repository.rosters.RegimentRepository;
 import com.emberstone.emberstone_tavern.repository.rosters.RosterGeneralRepository;
 import com.emberstone.emberstone_tavern.repository.rosters.RosterRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RosterService {
@@ -19,6 +22,8 @@ public class RosterService {
     private final RegimentRepository regimentRepository;
     private final PersonService personService;
     private final RosterGeneralRepository rosterGeneralRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(RosterService.class);
 
     public RosterService(
             RosterRepository rosterRepository,
@@ -32,11 +37,24 @@ public class RosterService {
         this.rosterGeneralRepository = rosterGeneralRepository;
     }
 
+    @Transactional
     public Optional<RosterModel> getRosterById(String email, UUID id) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
                 Optional<RosterModel> roster = rosterRepository.findByRosterId(id);
+                roster.ifPresent(rosterModel -> {
+
+                    // If the user created a new regiment, but never added a hero to lead it, we should clean it out.
+                    if (rosterModel.hasAnyEmptyRegiments()) {
+                        Set<RegimentModel> regimentCopy = new HashSet<>(rosterModel.getRegiments());
+                        regimentCopy.removeIf(child -> child.getUnits().isEmpty());
+                        rosterModel.getRegiments().clear();
+                        rosterModel.getRegiments().addAll(regimentCopy);
+                        rosterRepository.save(rosterModel);
+                    }
+
+                });
 
                 return roster;
             }
@@ -187,13 +205,13 @@ public class RosterService {
         }
     }
 
+    @Transactional
     public HttpResponseModel<Integer> deleteRegiment(String email, Integer regimentId) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             Optional<RegimentModel> regimentToDelete = regimentRepository.findById(regimentId);
             if (user.isPresent() && regimentToDelete.isPresent()) {
                 Optional<RosterModel> parentRoster = rosterRepository.findByRosterId(regimentToDelete.get().getRosterId());
-
                 if (parentRoster.isPresent() && parentRoster.get().getPlayerId().equals(user.get().getId())) {
                     regimentRepository.delete(regimentToDelete.get());
                     return HttpResponseModel.success("Regiment deleted", regimentToDelete.get().getId());
@@ -233,6 +251,7 @@ public class RosterService {
 
         return regimentRepository.save(newRegiment);
     }
+
     // Set the regiment's number as the next in the list
     private void setRegimentNumber(UUID rosterId, RegimentModel regiment) {
         Integer regimentCount = regimentRepository.getCountForRoster(rosterId);

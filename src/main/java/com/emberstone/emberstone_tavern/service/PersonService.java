@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @Service
 public class PersonService {
     private final PersonRepository personRepository;
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+    private static final Logger log = LoggerFactory.getLogger(PersonService.class);
 
     public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;

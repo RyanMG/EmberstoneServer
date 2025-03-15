@@ -71,6 +71,10 @@ public class RosterModel {
     @Column(name = "ror_id")
     private Integer rorId;
 
-    @OneToMany(mappedBy = "rosterId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rosterId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<RegimentModel> regiments;
+
+    public boolean hasAnyEmptyRegiments() {
+        return regiments == null || regiments.isEmpty() || regiments.stream().anyMatch(regiment -> regiment.getUnits().isEmpty());
+    }
 }
