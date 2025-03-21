@@ -1,9 +1,11 @@
 package com.emberstone.emberstone_tavern.controllers;
 
 import com.emberstone.emberstone_tavern.model.*;
+import com.emberstone.emberstone_tavern.model.campaign.CampaignGameModel;
 import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
 import com.emberstone.emberstone_tavern.dto.CampaignOverviewDTO;
 import com.emberstone.emberstone_tavern.model.campaign.CampaignSettingModel;
+import com.emberstone.emberstone_tavern.service.CampaignGameService;
 import com.emberstone.emberstone_tavern.service.CampaignInviteService;
 import com.emberstone.emberstone_tavern.service.CampaignService;
 import org.springframework.security.core.Authentication;
@@ -20,10 +22,16 @@ public class CampaignController {
 
     private final CampaignService campaignService;
     private final CampaignInviteService campaignInviteService;
+    private final CampaignGameService campaignGameService;
 
-    public CampaignController(CampaignService campaignService, CampaignInviteService campaignInviteService) {
+    public CampaignController(
+            CampaignService campaignService,
+            CampaignInviteService campaignInviteService,
+            CampaignGameService campaignGameService
+    ) {
         this.campaignService = campaignService;
         this.campaignInviteService = campaignInviteService;
+        this.campaignGameService = campaignGameService;
     }
 
     @GetMapping("/active")
@@ -69,5 +77,14 @@ public class CampaignController {
     @GetMapping("/settings")
     public List<CampaignSettingModel> getCampaignSettings() {
         return campaignService.getCampaignSettings();
+    }
+
+    @PostMapping("/{campaignId}/games")
+    public HttpResponseModel<Integer> createNewCampaignGame(
+            Authentication authentication,
+            @PathVariable UUID campaignId,
+            @RequestBody CampaignGameModel game
+    ) {
+        return campaignGameService.saveNewCampaignGame(authentication.getName(), campaignId, game);
     }
 }

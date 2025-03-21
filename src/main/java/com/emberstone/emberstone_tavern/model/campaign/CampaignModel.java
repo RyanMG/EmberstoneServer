@@ -7,7 +7,7 @@ import lombok.Data;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -54,7 +54,7 @@ public class CampaignModel {
     private CampaignStatus campaignStatus;
 
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private Date createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
