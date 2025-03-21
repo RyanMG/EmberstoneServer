@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class RosterService {
@@ -125,9 +124,8 @@ public class RosterService {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
-                RosterModel savedRoster = rosterRepository.save(roster);
-                RegimentModel campaignGeneralsRegiment = createNewRegiment(savedRoster.getId(), true, false);
-                savedRoster.setRegiments(Set.of(campaignGeneralsRegiment));
+                RosterModel savedRoster = rosterRepository.saveAndFlush(roster);
+                createNewRegiment(savedRoster.getId(), true, false);
 
                 return HttpResponseModel.success("Roster created successfully", savedRoster.getId());
             }
@@ -240,8 +238,8 @@ public class RosterService {
         return regimentRepository.save(newRegiment);
     }
 
-    // Create a new blank regiment with provided values
-    private RegimentModel createNewRegiment(UUID rosterId, boolean isGeneral, boolean isAuxiliary) {
+    // Create a new blank regiment with server provided values
+    void createNewRegiment(UUID rosterId, boolean isGeneral, boolean isAuxiliary) {
         RegimentModel newRegiment = new RegimentModel();
         newRegiment.setRosterId(rosterId);
         newRegiment.setUnits(new HashSet<>());
@@ -249,7 +247,7 @@ public class RosterService {
         newRegiment.setIsGeneral(isGeneral);
         newRegiment.setIsAuxiliary(isAuxiliary);
 
-        return regimentRepository.save(newRegiment);
+        regimentRepository.save(newRegiment);
     }
 
     // Set the regiment's number as the next in the list

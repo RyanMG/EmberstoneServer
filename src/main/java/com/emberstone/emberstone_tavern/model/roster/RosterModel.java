@@ -75,6 +75,6 @@ public class RosterModel {
     private Set<RegimentModel> regiments;
 
     public boolean hasAnyEmptyRegiments() {
-        return regiments == null || regiments.isEmpty() || regiments.stream().anyMatch(regiment -> regiment.getUnits().isEmpty());
+        return regiments == null || regiments.isEmpty() || regiments.stream().anyMatch(regiment -> !regiment.getIsGeneral() && regiment.getUnits().isEmpty());
     }
 }
