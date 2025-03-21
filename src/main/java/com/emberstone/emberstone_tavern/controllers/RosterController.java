@@ -42,7 +42,7 @@ public class RosterController {
     }
 
     @PostMapping("")
-    public HttpResponseModel<RosterModel> createUserCampaignRoster(Authentication authentication, @RequestBody RosterModel roster) {
+    public HttpResponseModel<UUID> createUserCampaignRoster(Authentication authentication, @RequestBody RosterModel roster) {
         return rosterService.createUserCampaignRoster(authentication.getName(), roster);
     }
 

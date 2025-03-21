@@ -71,7 +71,7 @@ public class RosterModel {
     @Column(name = "ror_id")
     private Integer rorId;
 
-    @OneToMany(mappedBy = "rosterId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "rosterId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RegimentModel> regiments;
 
     public boolean hasAnyEmptyRegiments() {

@@ -121,7 +121,7 @@ public class RosterService {
     }
 
     @Transactional
-    public HttpResponseModel<RosterModel> createUserCampaignRoster(String email, RosterModel roster) {
+    public HttpResponseModel<UUID> createUserCampaignRoster(String email, RosterModel roster) {
         try {
             Optional<PersonModel> user = personService.getActivePersonByEmail(email);
             if (user.isPresent()) {
@@ -129,7 +129,7 @@ public class RosterService {
                 RegimentModel campaignGeneralsRegiment = createNewRegiment(savedRoster.getId(), true, false);
                 savedRoster.setRegiments(Set.of(campaignGeneralsRegiment));
 
-                return HttpResponseModel.success("Roster created successfully", savedRoster);
+                return HttpResponseModel.success("Roster created successfully", savedRoster.getId());
             }
 
             return HttpResponseModel.error("No user found to create roster under", null);
