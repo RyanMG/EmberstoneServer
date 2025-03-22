@@ -48,6 +48,20 @@ public class CampaignGameService {
         }
     }
 
+    public HttpResponseModel<CampaignGameModel> getGameById(Integer gameId) {
+        try {
+            Optional<CampaignGameModel> game = campaignGameRepository.findById(gameId);
+            if (game.isPresent()) {
+                return HttpResponseModel.success("Campaign game", game.get());
+            }
+
+            return HttpResponseModel.error("Failed to get game", null);
+
+        } catch (Exception e) {
+            return HttpResponseModel.error("Failed to get game", null);
+        }
+    }
+
     public HttpResponseModel<Integer> saveNewCampaignGame(String userEmail, UUID campaignId, CampaignGameModel game) {
         try {
             Optional<MemberDTO> gameReporter = personService.getPersonByEmail(userEmail);

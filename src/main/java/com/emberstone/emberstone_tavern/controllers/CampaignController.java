@@ -92,4 +92,9 @@ public class CampaignController {
     ) {
         return campaignGameService.saveNewCampaignGame(authentication.getName(), campaignId, game);
     }
+
+    @GetMapping("/{campaignId}/games/{gameId}")
+    public HttpResponseModel<CampaignGameModel> getGameById(@PathVariable Integer gameId) {
+        return campaignGameService.getGameById(gameId);
+    }
 }
