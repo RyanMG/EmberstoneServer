@@ -8,6 +8,7 @@ import com.emberstone.emberstone_tavern.repository.campaign.CampaignGameReposito
 import com.emberstone.emberstone_tavern.util.CampaignUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +32,22 @@ public class CampaignGameService {
         this.campaignGameRepository = campaignGameRepository;
     }
 
+    public HttpResponseModel<List<CampaignGameModel>> getGamesByCampaignId(String email, UUID campaignId) {
+        try {
+            Optional<MemberDTO> user = personService.getPersonByEmail(email);
+            Optional<CampaignModel> campaign = campaignService.getCampaignById(campaignId);
+            if (user.isPresent() && campaign.isPresent() && campaignUtils.userIsInCampaign(user.get().getId(), campaign.get())) {
+                List<CampaignGameModel> games = campaignGameRepository.findByCampaignId(campaignId);
+                return HttpResponseModel.success("Campaign games", games);
+            }
+
+            return HttpResponseModel.error("Failed to get campaign games: invalid details provided", null);
+
+        } catch (Exception e) {
+            return HttpResponseModel.error("Failed to get campaign games", null);
+        }
+    }
+
     public HttpResponseModel<Integer> saveNewCampaignGame(String userEmail, UUID campaignId, CampaignGameModel game) {
         try {
             Optional<MemberDTO> gameReporter = personService.getPersonByEmail(userEmail);
@@ -39,7 +56,7 @@ public class CampaignGameService {
                 CampaignGameModel saved = campaignGameRepository.save(game);
                 return HttpResponseModel.success("New game saved", saved.getId());
             }
-            return HttpResponseModel.error("New game was not saved", null);
+            return HttpResponseModel.error("New game was not saved. Invalid details provided.", null);
         } catch (Exception e) {
             return HttpResponseModel.error("New game was not saved", null);
         }

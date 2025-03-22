@@ -79,6 +79,11 @@ public class CampaignController {
         return campaignService.getCampaignSettings();
     }
 
+    @GetMapping("/{campaignId}/games")
+    public HttpResponseModel<List<CampaignGameModel>> getCampaignGames(Authentication authentication, @PathVariable UUID campaignId) {
+        return campaignGameService.getGamesByCampaignId(authentication.getName(), campaignId);
+    }
+
     @PostMapping("/{campaignId}/games")
     public HttpResponseModel<Integer> createNewCampaignGame(
             Authentication authentication,

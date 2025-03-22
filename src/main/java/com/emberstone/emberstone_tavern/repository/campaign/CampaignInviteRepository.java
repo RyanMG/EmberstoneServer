@@ -9,11 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
-
 @Repository
 public interface CampaignInviteRepository extends JpaRepository<CampaignPersonInviteModel, Integer> {
 
     @Query("SELECT cpi FROM CampaignPersonInviteModel cpi WHERE cpi.playerId = :playerId")
     List<CampaignPersonInviteModel> getInvitesForPerson(@Param("playerId") UUID playerId);
-
 }
