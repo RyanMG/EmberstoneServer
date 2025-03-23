@@ -1,5 +1,6 @@
 package com.emberstone.emberstone_tavern.controllers;
 
+import com.emberstone.emberstone_tavern.dto.GameStoryDTO;
 import com.emberstone.emberstone_tavern.model.*;
 import com.emberstone.emberstone_tavern.model.campaign.CampaignGameModel;
 import com.emberstone.emberstone_tavern.model.campaign.CampaignModel;
@@ -106,5 +107,15 @@ public class CampaignController {
             @RequestBody CampaignGameModel game
     ) {
         return campaignGameService.updateGame(authentication.getName(), campaignId, gameId, game);
+    }
+
+    @PutMapping("/{campaignId}/games/{gameId}/story")
+    public HttpResponseModel<CampaignGameModel> updateGameStory(
+            Authentication authentication,
+            @PathVariable UUID campaignId,
+            @PathVariable Integer gameId,
+            @RequestBody GameStoryDTO story
+    ) {
+        return campaignGameService.updateGameStory(authentication.getName(), campaignId, gameId, story);
     }
 }

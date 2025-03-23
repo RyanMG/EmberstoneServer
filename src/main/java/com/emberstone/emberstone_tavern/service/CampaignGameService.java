@@ -1,5 +1,6 @@
 package com.emberstone.emberstone_tavern.service;
 
+import com.emberstone.emberstone_tavern.dto.GameStoryDTO;
 import com.emberstone.emberstone_tavern.dto.MemberDTO;
 import com.emberstone.emberstone_tavern.model.HttpResponseModel;
 import com.emberstone.emberstone_tavern.model.campaign.CampaignGameModel;
@@ -85,6 +86,26 @@ public class CampaignGameService {
                 if (gameData.isPresent()) {
                     CampaignGameModel saved = campaignGameRepository.save(game);
                     return HttpResponseModel.success("Game updated", saved);
+                }
+            }
+
+            return HttpResponseModel.error("Game was not updated. Invalid details provided.", null);
+
+        } catch (Exception e) {
+            return HttpResponseModel.error("Game was not updated", null);
+        }
+    }
+
+    public HttpResponseModel<CampaignGameModel> updateGameStory(String email, UUID campaignId, Integer gameId, GameStoryDTO story) {
+        try {
+            Optional<MemberDTO> gameUpdater = personService.getPersonByEmail(email);
+            Optional<CampaignModel> campaign = campaignService.getCampaignById(campaignId);
+            if (gameUpdater.isPresent() && campaign.isPresent() && campaignUtils.userIsInCampaign(gameUpdater.get().getId(), campaign.get())) {
+                Optional<CampaignGameModel> gameData = campaignGameRepository.findById(gameId);
+                if (gameData.isPresent()) {
+                    gameData.get().setStory(story.getStory());
+                    campaignGameRepository.save(gameData.get());
+                    return HttpResponseModel.success("Game updated", null);
                 }
             }
 
