@@ -97,4 +97,14 @@ public class CampaignController {
     public HttpResponseModel<CampaignGameModel> getGameById(@PathVariable Integer gameId) {
         return campaignGameService.getGameById(gameId);
     }
+
+    @PutMapping("/{campaignId}/games/{gameId}")
+    public HttpResponseModel<CampaignGameModel> updateGame(
+            Authentication authentication,
+            @PathVariable UUID campaignId,
+            @PathVariable Integer gameId,
+            @RequestBody CampaignGameModel game
+    ) {
+        return campaignGameService.updateGame(authentication.getName(), campaignId, gameId, game);
+    }
 }

@@ -75,4 +75,23 @@ public class CampaignGameService {
             return HttpResponseModel.error("New game was not saved", null);
         }
     }
+
+    public HttpResponseModel<CampaignGameModel> updateGame(String email, UUID campaignId, Integer gameId, CampaignGameModel game) {
+        try {
+            Optional<MemberDTO> gameUpdater = personService.getPersonByEmail(email);
+            Optional<CampaignModel> campaign = campaignService.getCampaignById(campaignId);
+            if (gameUpdater.isPresent() && campaign.isPresent() && campaignUtils.userIsInCampaign(gameUpdater.get().getId(), campaign.get())) {
+                Optional<CampaignGameModel> gameData = campaignGameRepository.findById(gameId);
+                if (gameData.isPresent()) {
+                    CampaignGameModel saved = campaignGameRepository.save(game);
+                    return HttpResponseModel.success("Game updated", saved);
+                }
+            }
+
+            return HttpResponseModel.error("Game was not updated. Invalid details provided.", null);
+
+        } catch (Exception e) {
+            return HttpResponseModel.error("Game was not updated", null);
+        }
+    }
 }
